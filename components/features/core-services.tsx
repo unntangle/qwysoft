@@ -308,9 +308,9 @@ function Pipeline({ progress }: { progress: MotionValue<number> }) {
 
 function PipelineStep({ label, index, progress }: { label: string; index: number; progress: MotionValue<number> }) {
   const at = index / (STEPS.length - 1);
-  const on = useTransform(progress, (v) => (v >= at - 0.02 ? 1 : 0));
-  const dot = useTransform(on, [0, 1], ["rgba(255,255,255,0.14)", "#ff3d86"]);
-  const text = useTransform(on, [0, 1], [0.45, 1]);
+  const on = useTransform<number, number>(progress, (v) => (v >= at - 0.02 ? 1 : 0));
+  const dot = useTransform<number, string>(on, [0, 1], ["rgba(255,255,255,0.14)", "#ff3d86"]);
+  const text = useTransform<number, number>(on, [0, 1], [0.45, 1]);
   const last = index === STEPS.length - 1;
   return (
     <li className={cn("flex flex-col gap-2", index === 0 ? "items-start" : last ? "items-end" : "items-center")}>
