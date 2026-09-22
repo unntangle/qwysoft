@@ -63,7 +63,7 @@ export function Navbar() {
     <header className="fixed inset-x-0 top-0 z-50">
       <div
         className={cn(
-          "transition-[background-color,box-shadow,backdrop-filter] duration-500",
+          "relative transition-[background-color,box-shadow,backdrop-filter] duration-500",
           open
             ? "bg-ivory/95 shadow-[0_1px_0_rgba(23,19,31,0.06)] backdrop-blur-xl"
             : scrolled && dark
@@ -169,14 +169,16 @@ export function Navbar() {
           {active?.columns && (
             <motion.div
               key="mega"
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: "auto" }}
-              exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.4, ease }}
-              className="hidden overflow-hidden border-t border-line/70 lg:block"
+              initial={{ opacity: 0, y: -8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.3, ease }}
+              className="absolute inset-x-0 top-full hidden px-12 pt-2 lg:block"
               onMouseEnter={() => openMenu(active.label)}
             >
-              <MegaPanel group={active} onNavigate={() => setOpen(null)} />
+              <div className="mx-auto max-w-[1080px] overflow-hidden rounded-[28px] border border-line/80 bg-ivory/[0.97] shadow-[0_40px_80px_-30px_rgba(23,19,31,0.35),0_12px_24px_-12px_rgba(23,19,31,0.12)] backdrop-blur-xl">
+                <MegaPanel group={active} onNavigate={() => setOpen(null)} />
+              </div>
             </motion.div>
           )}
         </AnimatePresence>
@@ -206,9 +208,9 @@ function MegaPanel({ group, onNavigate }: { group: NavGroup; onNavigate: () => v
       initial={{ opacity: 0, y: -6 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.35, ease, delay: 0.05 }}
-      className="mx-auto grid max-w-[1320px] grid-cols-12 gap-10 px-12 pb-12 pt-10"
+      className="grid grid-cols-12 gap-8 px-10 pb-10 pt-9"
     >
-      <p className="display col-span-3 text-[1.9rem] leading-[1.1] text-ink/90">{group.label}</p>
+      <p className="display col-span-3 text-[1.7rem] leading-[1.1] text-ink/90">{group.label}</p>
       <div className={cn("grid gap-10", group.feature ? "col-span-6" : "col-span-9", group.columns!.length > 1 && "grid-cols-2")}>
         {group.columns!.map((col) => (
           <div key={col.heading}>
@@ -237,16 +239,30 @@ function MegaPanel({ group, onNavigate }: { group: NavGroup; onNavigate: () => v
         <Link
           href={to(group.feature.href)}
           onClick={onNavigate}
-          className="group relative col-span-3 overflow-hidden rounded-2xl bg-indigo p-6 text-white"
+          className="group relative col-span-3 flex flex-col overflow-hidden rounded-2xl bg-indigo p-6 text-white"
         >
           <div className="absolute -right-10 -top-16 size-48 rounded-full bg-violet/50 blur-3xl" aria-hidden />
           <div className="absolute -bottom-16 -left-10 size-40 rounded-full bg-saffron/30 blur-3xl" aria-hidden />
           <p className="relative text-[15px] font-medium">{group.feature.title}</p>
           <p className="relative mt-2 text-[13.5px] leading-relaxed text-white/65">{group.feature.body}</p>
-          <p className="relative mt-8 flex items-center gap-1.5 text-[13.5px] font-medium">
+          <p className="relative mt-6 flex items-center gap-1.5 text-[13.5px] font-medium">
             {group.feature.cta}
             <ArrowRight className="size-3.5 transition-transform group-hover:translate-x-1" />
           </p>
+          {group.feature.image && (
+            <div className="relative mt-auto pt-7">
+              <span className="block w-fit rounded-2xl bg-white p-3 shadow-[0_12px_30px_-12px_rgba(0,0,0,0.5)] transition-transform duration-300 group-hover:-translate-y-0.5">
+                <Image
+                  src={group.feature.image.src}
+                  alt={group.feature.image.alt}
+                  width={group.feature.image.width}
+                  height={group.feature.image.height}
+                  sizes="120px"
+                  className="h-auto w-[96px]"
+                />
+              </span>
+            </div>
+          )}
         </Link>
       )}
     </motion.div>

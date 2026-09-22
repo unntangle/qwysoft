@@ -9,6 +9,7 @@ import { KeyBenefits } from "@/components/features/key-benefits";
 import { Footer } from "@/components/footer/footer";
 import { Hero } from "@/components/hero/hero";
 import { PlatformIntro } from "@/components/intro/platform-intro";
+import { WhoWeAre } from "@/components/intro/who-we-are";
 import { Navbar } from "@/components/navbar/navbar";
 import { Engagement } from "@/components/pricing/engagement";
 import { Culture } from "@/components/resources/culture";
@@ -24,6 +25,7 @@ export default function HomePage() {
       <Navbar />
       <main id="main">
         <Hero />
+        <WhoWeAre />
         <Trust />
         <PlatformIntro />
         <CoreServices />

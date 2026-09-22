@@ -5,6 +5,7 @@ import { ArrowRight, CornerDownLeft, FileText, GitCompareArrows, ShieldCheck, Sp
 import { useState } from "react";
 import { LineChart } from "@/components/dashboard/charts";
 import { Container } from "@/components/ui/container";
+import { Grad } from "@/components/ui/grad";
 import { StreamingText } from "@/components/ui/streaming-text";
 import { REPEAT_KOZHIKODE, REPEAT_OTHERS, REPEAT_WEEKS } from "@/lib/data";
 
@@ -43,7 +44,7 @@ export function Intelligence() {
             <span className="kasavu w-6" aria-hidden />
           </p>
           <h2 id="intelligence-title" className="display display-lg">
-            Intelligence that works with your data.
+            Intelligence that works with <Grad>your data.</Grad>
           </h2>
           <p className="lede mx-auto mt-7 max-w-[56ch]">
             Ask a question the way you would ask your best analyst. QWY reads across your ERP, apps and logs, and answers with

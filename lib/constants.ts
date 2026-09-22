@@ -38,7 +38,7 @@ export type NavGroup = {
   label: string;
   href?: string;
   columns?: { heading: string; links: NavLink[] }[];
-  feature?: { title: string; body: string; href: string; cta: string };
+  feature?: { title: string; body: string; href: string; cta: string; image?: { src: string; alt: string; width: number; height: number } };
 };
 
 // Mirrors the menu on qwysoft.com. Anchors point at homepage sections until
@@ -73,6 +73,7 @@ export const NAV: NavGroup[] = [
       body: "Implementation, customisation, migration and support from a certified Odoo partner in Technopark.",
       href: "#contact",
       cta: "Get a free consultation",
+      image: { src: "/brand/odoo-logo.webp", alt: "Odoo Silver Partner", width: 1140, height: 1040 },
     },
   },
   {
@@ -101,10 +102,38 @@ export const NAV: NavGroup[] = [
 
 /* ---------------- Hero ---------------- */
 
+// Use \n inside `accent` or `title` to force a line break in the hero headline.
+export type HeroSlide = { accent: string; title: string; body: string };
+
 export const HERO = {
-  eyebrow: "Intelligent platforms for growth",
-  title: "Build smarter business operations.",
-  body: "Transform operational data into intelligent business insights with AI-driven analytics, workflow automation, predictive forecasting and smart decision systems that improve efficiency at scale.",
+  eyebrow: "AI, ERP and custom software from Technopark",
+  slides: [
+    {
+      accent: "Build Smarter",
+      title: "Business\nOperations",
+      body: "Transform operational data into intelligent business insights with AI-driven analytics, workflow automation, predictive forecasting and smart decision systems that improve efficiency at scale.",
+    },
+    {
+      accent: "Future-Ready",
+      title: "Enterprise\nTechnology",
+      body: "Enterprise software powered by AI-enabled automation, predictive insights, intelligent workflows and real-time operational analytics, designed to streamline business operations and accelerate growth.",
+    },
+    {
+      accent: "Intelligent\nPlatforms",
+      title: "For Growth",
+      body: "Build modern business applications with intelligent automation, smart document processing, conversational interfaces, advanced enterprise search and real-time operational visibility.",
+    },
+    {
+      accent: "Smarter ERP.",
+      title: "Better\nDecisions.",
+      body: "Enhance your ERP ecosystem with AI-powered workflows, automated approvals, predictive forecasting, intelligent reporting and data-driven decision-making across business operations.",
+    },
+    {
+      accent: "Engineering\nIntelligent",
+      title: "Business Systems",
+      body: "Develop scalable digital platforms that combine intelligent process automation, connected business workflows, operational analytics and AI-driven insights for smarter enterprise management.",
+    },
+  ] as HeroSlide[],
   primary: { label: "Get a free consultation", href: "#contact" },
   secondary: { label: "See the platform", href: "#decisions" },
 };

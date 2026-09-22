@@ -1,64 +1,71 @@
 import Image from "next/image";
+import { IndustrySwitchboard } from "@/components/trust/industry-switchboard";
 import { Container } from "@/components/ui/container";
-import { Counter } from "@/components/ui/counter";
-import { INDUSTRIES, STACK, STATS } from "@/lib/constants";
+import { Grad } from "@/components/ui/grad";
+import { STACK } from "@/lib/constants";
 
 export function Trust() {
   return (
-    <section id="trust" className="relative pb-16 pt-24 sm:pb-20 sm:pt-32" aria-labelledby="trust-title">
+    <section id="trust" className="relative pb-10 pt-12 sm:pb-12 sm:pt-16" aria-labelledby="trust-title">
       <Container>
         <div className="grid gap-14 lg:grid-cols-12">
-          <h2 id="trust-title" className="display display-sm max-w-[16ch] lg:col-span-5">
-            Built for teams building what comes next.
+          <h2 id="trust-title" className="display display-md max-w-[16ch] lg:col-span-6">
+            Built for teams building <Grad>what comes next.</Grad>
           </h2>
-          <dl className="grid grid-cols-3 gap-6 lg:col-span-6 lg:col-start-7">
-            {STATS.map((s) => (
-              <div key={s.label} className="border-t border-ink/15 pt-5">
-                <dt className="sr-only">{s.label}</dt>
-                <dd className="display text-[clamp(2.4rem,1.6rem+2.6vw,4rem)] leading-none text-ink">
-                  <Counter to={s.value} suffix={s.suffix} />
-                </dd>
-                <dd className="mt-3 max-w-[18ch] text-[0.9375rem] leading-snug text-ink-soft">{s.label}</dd>
-              </div>
-            ))}
-          </dl>
+          <p className="lede lg:col-span-5 lg:col-start-8">
+            From single-outlet businesses to multi-branch operations across Kerala and beyond, we build the systems that run
+            sales, stock, people and finance, and the intelligence on top.
+          </p>
         </div>
 
-        <div className="mt-20 grid gap-10 lg:grid-cols-12">
-          <p className="text-[0.9375rem] text-mute lg:col-span-3">Industries we run operations for</p>
-          <ul className="flex flex-wrap gap-x-7 gap-y-3 text-[clamp(1.15rem,1rem+0.6vw,1.5rem)] tracking-[-0.015em] text-ink/75 lg:col-span-9">
-            {INDUSTRIES.map((i) => (
-              <li key={i}>{i}</li>
-            ))}
-          </ul>
+        <div className="mt-16">
+          <IndustrySwitchboard />
         </div>
 
-        <div className="mt-16 grid gap-10 border-t border-line pt-10 lg:grid-cols-12">
+        <div className="mt-20 grid items-center gap-10 border-t border-line pt-14 lg:grid-cols-12">
           <div className="lg:col-span-3">
-            <p className="text-[0.9375rem] text-mute">Built on technologies you trust</p>
-            <p className="mt-3 max-w-[34ch] text-[13.5px] leading-relaxed text-ink-soft">
+            <p className="text-[1.0625rem] font-medium text-ink">Built on technologies you trust</p>
+            <p className="mt-3 max-w-[34ch] text-[0.975rem] leading-relaxed text-ink-soft">
               Powerful frameworks, robust databases and cloud-ready platforms for high performance, security and long-term
               scalability.
             </p>
           </div>
-          <ul className="grid grid-cols-2 items-center gap-x-8 gap-y-8 sm:grid-cols-4 lg:col-span-9">
-            {STACK.map((t) => (
-              <li key={t.name} className="flex justify-center sm:justify-start">
-                <span
-                  className="relative block h-11 w-32 opacity-70 grayscale transition-[filter,opacity] duration-300 hover:opacity-100 hover:grayscale-0"
-                  title={t.name}
+          <div
+            className="marquee space-y-10 overflow-hidden py-5 [mask-image:linear-gradient(to_right,transparent,black_10%,black_90%,transparent)] lg:col-span-9"
+            aria-label="Technologies we use"
+          >
+            {[STACK.slice(0, Math.ceil(STACK.length / 2)), STACK.slice(Math.ceil(STACK.length / 2))].map((row, r) => {
+              // Repeat the row so one copy is wider than the viewport, then render it twice for a seamless loop
+              const set = [...row, ...row, ...row];
+              return (
+                <div
+                  key={r}
+                  className={`flex w-max ${r === 0 ? "animate-marquee" : "animate-marquee-reverse"}`}
                 >
-                  <Image
-                    src={t.logo}
-                    alt={t.name}
-                    fill
-                    sizes="128px"
-                    className="object-contain object-center mix-blend-multiply sm:object-left"
-                  />
-                </span>
-              </li>
-            ))}
-          </ul>
+                  {[0, 1].map((copy) => (
+                    <ul key={copy} className="flex shrink-0 items-center gap-20 pr-20" aria-hidden={copy === 1}>
+                      {set.map((t, i) => (
+                        <li key={`${t.name}-${i}`} className="shrink-0">
+                          <span
+                            className="relative block h-16 w-44 transition-[scale] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] will-change-[scale] [backface-visibility:hidden] hover:scale-[1.15]"
+                            title={t.name}
+                          >
+                            <Image
+                              src={t.logo}
+                              alt={copy === 0 && i < row.length ? t.name : ""}
+                              fill
+                              sizes="176px"
+                              className="object-contain object-center mix-blend-multiply"
+                            />
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                  ))}
+                </div>
+              );
+            })}
+          </div>
         </div>
       </Container>
     </section>

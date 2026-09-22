@@ -1,5 +1,6 @@
 import { ArrowUpRight } from "lucide-react";
 import { Container } from "@/components/ui/container";
+import { Grad } from "@/components/ui/grad";
 import { Thumb } from "@/components/ui/thumb";
 import { RESOURCES } from "@/lib/constants";
 
@@ -10,7 +11,7 @@ export function Resources() {
       <Container>
         <div className="flex flex-wrap items-end justify-between gap-6">
           <h2 id="resources-title" className="display display-md">
-            Insights
+            <Grad>Insights</Grad>
           </h2>
           <a href="#resources" className="group flex items-center gap-1.5 text-[15px] font-medium text-plum">
             All articles

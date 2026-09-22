@@ -1,6 +1,7 @@
 import { Mail, MessageCircle, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
+import { Grad } from "@/components/ui/grad";
 import { Kasavu } from "@/components/ui/kasavu";
 import { SITE } from "@/lib/constants";
 
@@ -19,7 +20,7 @@ export function FinalCta() {
         <Container className="relative py-28 text-center sm:py-40">
           <Kasavu className="mx-auto mb-12 max-w-[96px] opacity-80" />
           <h2 id="contact-title" className="display display-lg mx-auto max-w-[15ch]">
-            Build the intelligence layer for your business.
+            Build the <Grad tone="dark">intelligence layer</Grad> for your business.
           </h2>
           <p className="lede mx-auto mt-7 max-w-[52ch] text-white/65">
             Tell us how your business runs today. In one free session we will map what to connect, what to automate and what

@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
+import { Grad } from "@/components/ui/grad";
 import { LIFE_PHOTOS } from "@/lib/constants";
 
 /**
@@ -16,7 +17,7 @@ export function Culture() {
           <div className="lg:col-span-7">
             <p className="kicker mb-6">The team behind your system</p>
             <h2 id="team-title" className="display display-md max-w-[16ch]">
-              Built by a team in Technopark, Thiruvananthapuram.
+              Built by a team in <Grad>Technopark</Grad>, Thiruvananthapuram.
             </h2>
           </div>
           <div className="lg:col-span-4 lg:col-start-9">

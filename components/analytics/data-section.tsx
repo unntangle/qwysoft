@@ -2,6 +2,7 @@ import { Lightbulb } from "lucide-react";
 import { Bars, LineChart } from "@/components/dashboard/charts";
 import { Container } from "@/components/ui/container";
 import { Counter } from "@/components/ui/counter";
+import { Grad } from "@/components/ui/grad";
 import { Reveal } from "@/components/ui/reveal";
 import { SectionIntro } from "@/components/ui/section-intro";
 import {
@@ -47,7 +48,7 @@ export function DataSection() {
           <SectionIntro
             className="lg:col-span-7"
             kicker="Real-time insights"
-            title={<span id="data-title">Every number, with the reason next to it.</span>}
+            title={<span id="data-title">Every number, with <Grad>the reason</Grad> next to it.</span>}
           />
           <p className="lede lg:col-span-4 lg:col-start-9">
             Charts that end in a conclusion. Each view carries the insight a manager would otherwise spend an afternoon

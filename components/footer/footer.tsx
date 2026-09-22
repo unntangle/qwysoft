@@ -4,6 +4,7 @@ import Link from "next/link";
 import { FaInstagram, FaLinkedin, FaSquareFacebook, FaWhatsapp } from "react-icons/fa6";
 import { FooterMark } from "@/components/footer/footer-mark";
 import { Button } from "@/components/ui/button";
+import { Logo } from "@/components/ui/logo";
 import { FOOTER_COLUMNS, SITE } from "@/lib/constants";
 
 const SOCIAL_ICONS: Record<string, React.ComponentType<{ className?: string; "aria-hidden"?: boolean }>> = {
@@ -113,6 +114,7 @@ export function Footer() {
             {/* Contact + socials, above the divider */}
             <div className="mt-20 flex flex-col gap-10 border-b border-white/10 pb-8 md:flex-row md:items-end md:justify-between">
             <address className="flex flex-col items-start gap-3 text-[14px] not-italic text-white/70">
+              <Logo tone="white" height={36} className="mb-3" />
               <p className="mb-2 max-w-[62ch] text-[15px] leading-relaxed text-white/85">
                 We deliver innovative solutions in hyperlocal delivery, fleet management and tailored software development,
                 empowering businesses to thrive.

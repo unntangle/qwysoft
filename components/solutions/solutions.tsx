@@ -4,6 +4,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { ArrowRight, Check, Plus } from "lucide-react";
 import { useState } from "react";
 import { Container } from "@/components/ui/container";
+import { Grad } from "@/components/ui/grad";
 import { SOLUTIONS, type Solution } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 
@@ -20,7 +21,7 @@ export function Solutions() {
           <div className="lg:col-span-7">
             <p className="kicker mb-6">Odoo ERP services</p>
             <h2 id="solutions-title" className="display display-md max-w-[16ch]">
-              Your whole business, running on one system.
+              Your whole business, running on <Grad>one system.</Grad>
             </h2>
           </div>
           <p className="lede lg:col-span-4 lg:col-start-9">

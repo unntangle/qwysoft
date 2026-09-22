@@ -1,6 +1,7 @@
 import { Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
+import { Grad } from "@/components/ui/grad";
 import { ENGAGEMENTS } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 
@@ -12,7 +13,7 @@ export function Engagement() {
           <div className="lg:col-span-6">
             <p className="kicker mb-6">Pricing</p>
             <h2 id="engage-title" className="display display-md max-w-[14ch]">
-              Three ways to work with us.
+              <Grad>Three ways</Grad> to work with us.
             </h2>
           </div>
           <p className="lede lg:col-span-5 lg:col-start-8">

@@ -2,6 +2,7 @@ import { AlertTriangle, Camera, Check, Clock3, MapPin, Plug } from "lucide-react
 import { Sparkline } from "@/components/dashboard/charts";
 import { Container } from "@/components/ui/container";
 import { Counter } from "@/components/ui/counter";
+import { Grad } from "@/components/ui/grad";
 import { SectionIntro } from "@/components/ui/section-intro";
 import { cn } from "@/lib/utils";
 
@@ -68,7 +69,7 @@ export function Capabilities() {
           <SectionIntro
             className="lg:col-span-7"
             kicker="Custom software"
-            title={<span id="capabilities-title">Software that fits your business, not the other way around.</span>}
+            title={<span id="capabilities-title">Software that <Grad>fits your business</Grad>, not the other way around.</span>}
           />
           <p className="lede lg:col-span-4 lg:col-start-9">
             Whether it is a new platform or an existing system that needs to grow up, we build tools that are practical,

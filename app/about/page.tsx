@@ -6,6 +6,7 @@ import { Navbar } from "@/components/navbar/navbar";
 import { Button } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
 import { Counter } from "@/components/ui/counter";
+import { Grad } from "@/components/ui/grad";
 import { Kasavu } from "@/components/ui/kasavu";
 import { LIFE_PHOTOS, SITE, STATS } from "@/lib/constants";
 import { cn } from "@/lib/utils";
@@ -49,7 +50,7 @@ export default function AboutPage() {
             </p>
             <div className="grid gap-10 lg:grid-cols-12 lg:items-end">
               <h1 id="about-title" className="display display-lg max-w-[13ch] lg:col-span-7">
-                A technology partner for growing businesses.
+                A technology partner for <Grad>growing businesses.</Grad>
               </h1>
               <div className="space-y-5 text-[1.0625rem] leading-relaxed text-ink-soft lg:col-span-5">
                 <p>
@@ -85,7 +86,7 @@ export default function AboutPage() {
               <div className="lg:col-span-7">
                 <p className="kicker mb-6">Life at QWY</p>
                 <h2 id="life-title" className="display display-lg max-w-[12ch]">
-                  Our people are our brand.
+                  Our people are <Grad>our brand.</Grad>
                 </h2>
               </div>
               <p className="lede lg:col-span-5">
@@ -141,7 +142,7 @@ export default function AboutPage() {
               <div className="lg:col-span-6">
                 <p className="kicker mb-6">Careers</p>
                 <h2 id="careers-title" className="display display-md max-w-[14ch]">
-                  Build what comes next with us.
+                  Build <Grad>what comes next</Grad> with us.
                 </h2>
                 <p className="lede mt-6 max-w-[48ch]">
                   We are always looking for engineers, Odoo consultants, QA specialists and designers who care about building

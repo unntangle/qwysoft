@@ -5,18 +5,15 @@ import { cn } from "@/lib/utils";
 type Variant = "primary" | "secondary" | "light" | "ghost-light";
 
 /**
- * Every button rests in a quiet neutral tone and, on hover, fills with the
- * QWY logo gradient (pink → magenta → violet). The gradient lives on a
- * ::before layer so it can fade in with opacity (gradients can't transition).
+ * Every button rests in a quiet neutral tone and, on hover, shifts to a
+ * subtle grey (same treatment as the industry dial's arrow buttons).
  */
-const GRADIENT_HOVER =
-  "relative isolate overflow-hidden before:absolute before:inset-0 before:-z-10 before:bg-[linear-gradient(100deg,#ff1f6b_0%,#c3158a_50%,#5a0aa6_100%)] before:opacity-0 before:transition-opacity before:duration-300 hover:before:opacity-100 hover:text-white hover:border-transparent hover:ring-transparent hover:shadow-[0_12px_28px_-12px_rgba(195,21,138,0.6)]";
-
 const styles: Record<Variant, string> = {
-  primary: "bg-[#f1eff4] text-ink ring-1 ring-inset ring-[#e2dde9] shadow-[0_1px_0_rgba(255,255,255,0.8)_inset,0_6px_16px_-10px_rgba(23,19,31,0.25)]",
-  secondary: "bg-white/80 text-ink ring-1 ring-inset ring-line-strong backdrop-blur",
-  light: "bg-white text-ink ring-1 ring-inset ring-white/60",
-  "ghost-light": "text-white ring-1 ring-inset ring-white/30",
+  primary:
+    "bg-[#2e2b35] text-white ring-1 ring-inset ring-[#2e2b35] shadow-[0_6px_16px_-10px_rgba(23,19,31,0.45)] hover:bg-[#45414d]",
+  secondary: "bg-white/80 text-ink ring-1 ring-inset ring-line-strong backdrop-blur hover:bg-[#ebe9ee]",
+  light: "bg-white text-ink ring-1 ring-inset ring-white/60 hover:bg-[#ebe9ee]",
+  "ghost-light": "text-white ring-1 ring-inset ring-white/30 hover:bg-white/10",
 };
 
 export function Button({
@@ -45,8 +42,7 @@ export function Button({
       onClick={onClick}
       {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
       className={cn(
-        "btn group inline-flex items-center justify-center gap-2 rounded-[10px] font-medium tracking-[-0.005em] transition-[color,box-shadow] duration-300 active:translate-y-px",
-        GRADIENT_HOVER,
+        `btn btn-${variant} group inline-flex cursor-pointer items-center justify-center gap-2 rounded-[10px] font-medium tracking-[-0.005em] transition-colors duration-200 active:translate-y-px`,
         sizing,
         styles[variant],
         className,

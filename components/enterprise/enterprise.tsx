@@ -1,4 +1,5 @@
 import { Container } from "@/components/ui/container";
+import { Grad } from "@/components/ui/grad";
 import { ENTERPRISE } from "@/lib/constants";
 
 const STATUS = [
@@ -18,7 +19,7 @@ export function Enterprise() {
             <div className="lg:sticky lg:top-28">
               <p className="kicker mb-6">For the enterprise</p>
               <h2 id="enterprise-title" className="display display-md max-w-[16ch]">
-                Engineering you can hand to your auditors.
+                Engineering you can hand to <Grad>your auditors.</Grad>
               </h2>
               <p className="lede mt-6 max-w-[44ch]">
                 The systems we build carry your revenue, payroll and customer data. They are designed, tested and operated

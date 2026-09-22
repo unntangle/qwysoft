@@ -34,7 +34,10 @@ export const metadata: Metadata = {
     description: SITE.description,
   },
   robots: { index: true, follow: true },
-  icons: { icon: "/icon.svg" },
+  icons: {
+    icon: [{ url: "/brand/fav-icon.webp", type: "image/webp" }],
+    apple: [{ url: "/brand/fav-icon.webp", type: "image/webp" }],
+  },
 };
 
 export const viewport: Viewport = {

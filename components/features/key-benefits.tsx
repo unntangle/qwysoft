@@ -1,5 +1,6 @@
 import { Activity, Blocks, Code2, Layers, Plug, Rocket, Users, Workflow } from "lucide-react";
 import { Container } from "@/components/ui/container";
+import { Grad } from "@/components/ui/grad";
 
 const BENEFITS = [
   {
@@ -52,7 +53,7 @@ export function KeyBenefits() {
           <div className="lg:col-span-6">
             <p className="kicker mb-6">Why QWY</p>
             <h2 id="benefits-title" className="display display-md max-w-[14ch]">
-              Key features and benefits
+              Key <Grad>features and benefits</Grad>
             </h2>
           </div>
           <p className="lede lg:col-span-5 lg:col-start-8">

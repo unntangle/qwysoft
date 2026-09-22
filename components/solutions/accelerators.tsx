@@ -1,5 +1,6 @@
 import { ArrowUpRight, Timer } from "lucide-react";
 import { Container } from "@/components/ui/container";
+import { Grad } from "@/components/ui/grad";
 import { Thumb } from "@/components/ui/thumb";
 import { ACCELERATORS } from "@/lib/constants";
 
@@ -9,7 +10,7 @@ export function Accelerators() {
       <Container>
         <div className="grid gap-8 border-t border-line pt-16 lg:grid-cols-12">
           <h2 id="accelerators-title" className="display display-sm max-w-[18ch] lg:col-span-6">
-            Pre-built platforms, so you start at eighty percent.
+            Pre-built platforms, so you start at <Grad>eighty percent.</Grad>
           </h2>
           <p className="lede lg:col-span-5 lg:col-start-8">
             Proven starting points for common operations. Less implementation time, with full room to customise the part that

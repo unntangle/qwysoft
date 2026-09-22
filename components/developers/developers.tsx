@@ -1,4 +1,5 @@
 import { Container } from "@/components/ui/container";
+import { Grad } from "@/components/ui/grad";
 import { CodePanel, type Snippet } from "@/components/developers/code-panel";
 import { TeamTabs } from "@/components/developers/team-tabs";
 
@@ -82,7 +83,7 @@ export function Developers() {
           <div className="lg:col-span-7">
             <p className="kicker mb-6 text-violet-soft">For developers</p>
             <h2 id="developers-title" className="display display-md max-w-[15ch]">
-              Open by design, down to the last endpoint.
+              <Grad tone="dark">Open by design</Grad>, down to the last endpoint.
             </h2>
           </div>
           <p className="lede text-white/60 lg:col-span-4 lg:col-start-9">
@@ -134,7 +135,7 @@ export function Developers() {
 
         <div className="mt-24">
           <div className="grid gap-6 lg:grid-cols-12 lg:items-end">
-            <h3 className="display display-sm max-w-[18ch] lg:col-span-6">Dedicated teams that work as an extension of yours.</h3>
+            <h3 className="display display-sm max-w-[18ch] lg:col-span-6">Dedicated teams that work as <Grad tone="dark">an extension of yours.</Grad></h3>
             <p className="text-[1.0625rem] leading-relaxed text-white/55 lg:col-span-5 lg:col-start-8">
               Consistency, speed and accountability in every phase: continuous support, quick iterations and dependable
               execution, so your roadmap keeps moving.
