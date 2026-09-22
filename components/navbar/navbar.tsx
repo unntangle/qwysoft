@@ -1,0 +1,313 @@
+"use client";
+
+import { AnimatePresence, motion } from "framer-motion";
+import { ArrowRight, ChevronDown, Menu, X } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import { useEffect, useRef, useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Logo } from "@/components/ui/logo";
+import { NAV, type NavGroup } from "@/lib/constants";
+import { cn } from "@/lib/utils";
+
+const ease = [0.22, 1, 0.36, 1] as const;
+
+/** Section anchors (#solutions) live on the homepage; make them work from any page. */
+const to = (href: string) => (href.startsWith("#") ? `/${href}` : href);
+
+export function Navbar() {
+  const [scrolled, setScrolled] = useState(false);
+  const [dark, setDark] = useState(false);
+  const [open, setOpen] = useState<string | null>(null);
+  const [mobile, setMobile] = useState(false);
+  const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    // Switch to a dark bar while a dark section sits under the navbar.
+    const onScroll = () => {
+      setScrolled(window.scrollY > 24);
+      const under = document.elementsFromPoint(window.innerWidth / 2, 40).find((el) => !el.closest("header"));
+      setDark(Boolean(under?.closest("[data-nav='dark']")));
+    };
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setOpen(null);
+        setMobile(false);
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
+
+  useEffect(() => {
+    document.documentElement.style.overflow = mobile ? "hidden" : "";
+  }, [mobile]);
+
+  const openMenu = (label: string) => {
+    if (closeTimer.current) clearTimeout(closeTimer.current);
+    setOpen(label);
+  };
+  const scheduleClose = () => {
+    closeTimer.current = setTimeout(() => setOpen(null), 140);
+  };
+
+  const active = NAV.find((g) => g.label === open);
+
+  return (
+    <header className="fixed inset-x-0 top-0 z-50">
+      <div
+        className={cn(
+          "transition-[background-color,box-shadow,backdrop-filter] duration-500",
+          open
+            ? "bg-ivory/95 shadow-[0_1px_0_rgba(23,19,31,0.06)] backdrop-blur-xl"
+            : scrolled && dark
+              ? "nav-dark bg-night/70 shadow-[0_1px_0_rgba(255,255,255,0.06)] backdrop-blur-xl backdrop-saturate-150"
+              : scrolled
+                ? "bg-ivory/80 shadow-[0_1px_0_rgba(23,19,31,0.06)] backdrop-blur-xl backdrop-saturate-150"
+                : "bg-transparent",
+        )}
+        onMouseLeave={scheduleClose}
+      >
+        <nav
+          aria-label="Main"
+          className={cn(
+            "mx-auto flex max-w-[1320px] items-center px-5 transition-[height] duration-500 sm:px-8 lg:px-12",
+            scrolled ? "h-16" : "h-20",
+          )}
+        >
+          <div className="mr-10 flex shrink-0 items-center gap-4">
+            <Link href="/" aria-label="QWY Software home" className="flex items-center">
+              <Logo tone={scrolled && dark && !open ? "white" : "color"} height={scrolled ? 26 : 30} priority />
+            </Link>
+            <span
+              aria-hidden
+              className={cn(
+                "hidden h-8 w-px sm:block",
+                scrolled && dark && !open ? "bg-white/25" : "bg-line-strong",
+              )}
+            />
+            <a
+              href="https://www.odoo.com/partners"
+              target="_blank"
+              rel="noopener noreferrer"
+              title="Odoo Silver Partner"
+              className={cn(
+                "hidden shrink-0 items-center rounded-md transition-colors sm:flex",
+                scrolled && dark && !open ? "bg-white px-1.5 py-1" : "",
+              )}
+            >
+              {/* odoo-logo-header.webp has wide padding; crop to the artwork (≈19–82% × 33.5–66%) */}
+              <span className="block shrink-0 overflow-hidden" style={{ width: 100, height: 48 }}>
+                <Image
+                  src="/brand/odoo-logo-header.webp"
+                  alt="Odoo Silver Partner"
+                  width={1140}
+                  height={1060}
+                  sizes="150px"
+                  priority
+                  className={cn("block max-w-none", !(scrolled && dark && !open) && "mix-blend-multiply")}
+                  style={{ width: 146, height: 136, marginTop: -43.5, marginLeft: -23.5 }}
+                />
+              </span>
+            </a>
+          </div>
+
+          <ul className="hidden items-center gap-1 lg:flex">
+            {NAV.map((g) => (
+              <li key={g.label} onMouseEnter={() => (g.columns ? openMenu(g.label) : setOpen(null))}>
+                {g.columns ? (
+                  <button
+                    type="button"
+                    aria-expanded={open === g.label}
+                    aria-haspopup="true"
+                    onClick={() => setOpen(open === g.label ? null : g.label)}
+                    onFocus={() => openMenu(g.label)}
+                    className={cn(
+                      "flex items-center gap-1 rounded-lg px-3 py-2 text-[0.9375rem] transition-colors",
+                      open === g.label ? "text-plum" : "text-ink/80 hover:text-ink",
+                    )}
+                  >
+                    {g.label}
+                    <ChevronDown
+                      className={cn("size-3.5 transition-transform duration-300", open === g.label && "rotate-180")}
+                      aria-hidden
+                    />
+                  </button>
+                ) : (
+                  <Link href={to(g.href ?? "/")} className="rounded-lg px-3 py-2 text-[0.9375rem] text-ink/80 transition-colors hover:text-ink">
+                    {g.label}
+                  </Link>
+                )}
+              </li>
+            ))}
+          </ul>
+
+          <div className="ml-auto hidden items-center gap-3 lg:flex">
+            <Button href="#contact" size="sm" className="h-10 px-4">
+              Get in touch
+            </Button>
+          </div>
+
+          <button
+            type="button"
+            className="ml-auto grid size-10 place-items-center rounded-lg text-ink lg:hidden"
+            aria-label={mobile ? "Close menu" : "Open menu"}
+            aria-expanded={mobile}
+            onClick={() => setMobile((m) => !m)}
+          >
+            {mobile ? <X className="size-5" /> : <Menu className="size-5" />}
+          </button>
+        </nav>
+
+        <AnimatePresence>
+          {active?.columns && (
+            <motion.div
+              key="mega"
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.4, ease }}
+              className="hidden overflow-hidden border-t border-line/70 lg:block"
+              onMouseEnter={() => openMenu(active.label)}
+            >
+              <MegaPanel group={active} onNavigate={() => setOpen(null)} />
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+
+      <AnimatePresence>
+        {mobile && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            className="fixed inset-x-0 bottom-0 top-16 overflow-y-auto bg-ivory lg:hidden"
+          >
+            <MobileMenu onNavigate={() => setMobile(false)} />
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </header>
+  );
+}
+
+function MegaPanel({ group, onNavigate }: { group: NavGroup; onNavigate: () => void }) {
+  return (
+    <motion.div
+      key={group.label}
+      initial={{ opacity: 0, y: -6 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.35, ease, delay: 0.05 }}
+      className="mx-auto grid max-w-[1320px] grid-cols-12 gap-10 px-12 pb-12 pt-10"
+    >
+      <p className="display col-span-3 text-[1.9rem] leading-[1.1] text-ink/90">{group.label}</p>
+      <div className={cn("grid gap-10", group.feature ? "col-span-6" : "col-span-9", group.columns!.length > 1 && "grid-cols-2")}>
+        {group.columns!.map((col) => (
+          <div key={col.heading}>
+            <p className="mb-4 text-[13px] text-mute">{col.heading}</p>
+            <ul className="space-y-1">
+              {col.links.map((l) => (
+                <li key={l.label}>
+                  <Link
+                    href={to(l.href)}
+                    onClick={onNavigate}
+                    className="group -mx-3 block rounded-xl px-3 py-2.5 transition-colors hover:bg-white"
+                  >
+                    <span className="flex items-center gap-1.5 text-[15px] font-medium text-ink">
+                      {l.label}
+                      <ArrowRight className="size-3.5 -translate-x-1 opacity-0 transition-all group-hover:translate-x-0 group-hover:opacity-100" />
+                    </span>
+                    {l.description && <span className="mt-0.5 block text-[13.5px] text-mute">{l.description}</span>}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
+      {group.feature && (
+        <Link
+          href={to(group.feature.href)}
+          onClick={onNavigate}
+          className="group relative col-span-3 overflow-hidden rounded-2xl bg-indigo p-6 text-white"
+        >
+          <div className="absolute -right-10 -top-16 size-48 rounded-full bg-violet/50 blur-3xl" aria-hidden />
+          <div className="absolute -bottom-16 -left-10 size-40 rounded-full bg-saffron/30 blur-3xl" aria-hidden />
+          <p className="relative text-[15px] font-medium">{group.feature.title}</p>
+          <p className="relative mt-2 text-[13.5px] leading-relaxed text-white/65">{group.feature.body}</p>
+          <p className="relative mt-8 flex items-center gap-1.5 text-[13.5px] font-medium">
+            {group.feature.cta}
+            <ArrowRight className="size-3.5 transition-transform group-hover:translate-x-1" />
+          </p>
+        </Link>
+      )}
+    </motion.div>
+  );
+}
+
+function MobileMenu({ onNavigate }: { onNavigate: () => void }) {
+  const [expanded, setExpanded] = useState<string | null>(null);
+  return (
+    <div className="flex min-h-full flex-col px-5 pb-8 pt-4 sm:px-8">
+      <ul className="divide-y divide-line">
+        {NAV.map((g) => (
+          <li key={g.label}>
+            {g.columns ? (
+              <>
+                <button
+                  type="button"
+                  className="flex w-full items-center justify-between py-4 text-left"
+                  aria-expanded={expanded === g.label}
+                  onClick={() => setExpanded(expanded === g.label ? null : g.label)}
+                >
+                  <span className="display text-[1.75rem]">{g.label}</span>
+                  <ChevronDown className={cn("size-5 transition-transform", expanded === g.label && "rotate-180")} />
+                </button>
+                <AnimatePresence initial={false}>
+                  {expanded === g.label && (
+                    <motion.ul
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.3, ease }}
+                      className="overflow-hidden"
+                    >
+                      {g.columns.flatMap((c) => c.links).map((l) => (
+                        <li key={l.label}>
+                          <Link href={to(l.href)} onClick={onNavigate} className="block py-2.5 pl-1 text-[15px] text-ink-soft">
+                            {l.label}
+                          </Link>
+                        </li>
+                      ))}
+                      <li className="h-3" />
+                    </motion.ul>
+                  )}
+                </AnimatePresence>
+              </>
+            ) : (
+              <Link href={to(g.href ?? "/")} onClick={onNavigate} className="block py-4">
+                <span className="display text-[1.75rem]">{g.label}</span>
+              </Link>
+            )}
+          </li>
+        ))}
+      </ul>
+      <div className="mt-auto grid gap-3 pt-10">
+        <Button href="#contact" size="lg" className="w-full" onClick={onNavigate}>
+          Get in touch
+        </Button>
+        <p className="text-center text-[13px] text-mute">
+          <span className="font-semibold text-[#875a7b]">odoo</span> Silver Partner
+        </p>
+      </div>
+    </div>
+  );
+}
