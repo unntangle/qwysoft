@@ -41,10 +41,7 @@ export function Hero() {
         <div aria-hidden className="grain absolute inset-0 -z-10 opacity-60" />
         {/* Interactive dot-matrix field that follows the cursor */}
         <HeroField className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[min(1000px,72%)] w-full" />
-        {/* Two soft brand orbs: drift slowly on their own, and move in opposite directions with the mouse */}
-        <div aria-hidden className="hx-orb-a pointer-events-none absolute left-[4%] top-[6%] -z-10 size-[420px]">
-          <div className="hx-float size-full rounded-full bg-[radial-gradient(closest-side,rgba(255,31,107,0.26),transparent)]" />
-        </div>
+        {/* A soft violet brand orb: drifts slowly on its own and moves gently with the mouse */}
         <div aria-hidden className="hx-orb-b pointer-events-none absolute right-[2%] top-[18%] -z-10 size-[480px]">
           <div className="hx-float-alt size-full rounded-full bg-[radial-gradient(closest-side,rgba(143,92,255,0.3),transparent)]" />
         </div>

@@ -306,8 +306,8 @@ export function IndustrySwitchboard() {
             <svg viewBox={`0 0 ${W} ${H}`} className="absolute inset-0 h-full w-full" aria-hidden>
               <defs>
                 <linearGradient id="trace" x1="0" x2="1" y1="0" y2="1">
-                  <stop offset="0" stopColor="#ff1f6b" />
-                  <stop offset="1" stopColor="#8f5cff" />
+                  <stop offset="0" stopColor="#8f5cff" />
+                  <stop offset="1" stopColor="#5a0aa6" />
                 </linearGradient>
               </defs>
 
@@ -335,7 +335,7 @@ export function IndustrySwitchboard() {
                         d={s.d}
                         pathLength={1}
                         fill="none"
-                        stroke="#ff1f6b"
+                        stroke="#b39cff"
                         strokeWidth={4}
                         strokeLinecap="round"
                         className="trace-signal"
@@ -363,13 +363,13 @@ export function IndustrySwitchboard() {
 
             {/* Core processor */}
             <div
-              className="absolute grid place-items-center rounded-2xl bg-[linear-gradient(135deg,#ff1f6b,#c3158a_50%,#5a0aa6)] text-white shadow-[0_20px_40px_-16px_rgba(195,21,138,0.7)]"
+              className="absolute grid place-items-center rounded-2xl bg-[linear-gradient(135deg,#8f5cff,#5a0aa6_50%,#33055f)] text-white shadow-[0_20px_40px_-16px_rgba(90,10,166,0.65)]"
               style={{ left: pct(CHIP.x, W), top: pct(CHIP.y, H), width: pct(CHIP.w, W), height: pct(CHIP.h, H) }}
             >
               <span aria-hidden className="absolute inset-[6px] rounded-xl border border-white/20" />
               <span aria-hidden className="absolute left-3 top-3 size-1.5 rounded-full bg-white/70" />
               {!reduce && (
-                <span aria-hidden className="absolute -inset-1.5 animate-pulse rounded-[20px] ring-2 ring-[#ff1f6b]/25" />
+                <span aria-hidden className="absolute -inset-1.5 animate-pulse rounded-[20px] ring-2 ring-[#8f5cff]/25" />
               )}
               <span className="relative flex flex-col items-center text-center leading-tight">
                 <span className="block text-[15px] font-semibold tracking-[0.04em]">QWY</span>
