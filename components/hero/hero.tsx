@@ -35,15 +35,15 @@ export function Hero() {
         {/* Background: indigo → violet, a glowing floor under the product shot, dark again at the foot */}
         <div
           aria-hidden
-          className="absolute inset-0 -z-10 bg-[linear-gradient(180deg,#22033d_0%,#33055f_22%,#5a0aa6_50%,#7a2fd4_66%,#5a0aa6_84%,#26043f_100%)]"
+          className="absolute inset-0 -z-10 bg-[linear-gradient(180deg,#140322_0%,#1c0531_22%,#2a0a4a_50%,#3a1668_66%,#2a0a4a_84%,#150424_100%)]"
         />
-        <HeroGlow className="absolute inset-x-0 top-[48%] -z-10 h-[40%] origin-bottom bg-[radial-gradient(50%_60%_at_50%_70%,rgba(240,226,255,0.95)_0%,rgba(196,150,255,0.55)_35%,rgba(122,47,212,0)_75%)]" />
+        <HeroGlow className="absolute inset-x-0 top-[48%] -z-10 h-[40%] origin-bottom bg-[radial-gradient(50%_60%_at_50%_70%,rgba(214,196,240,0.6)_0%,rgba(150,110,210,0.32)_35%,rgba(90,40,150,0)_75%)]" />
         <div aria-hidden className="grain absolute inset-0 -z-10 opacity-60" />
         {/* Interactive dot-matrix field that follows the cursor */}
         <HeroField className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[min(1000px,72%)] w-full" />
         {/* A soft violet brand orb: drifts slowly on its own and moves gently with the mouse */}
         <div aria-hidden className="hx-orb-b pointer-events-none absolute right-[2%] top-[18%] -z-10 size-[480px]">
-          <div className="hx-float-alt size-full rounded-full bg-[radial-gradient(closest-side,rgba(143,92,255,0.3),transparent)]" />
+          <div className="hx-float-alt size-full rounded-full bg-[radial-gradient(closest-side,rgba(143,92,255,0.16),transparent)]" />
         </div>
         {/* Tracks the mouse over the card and drives the .hx-* depth layers */}
         <HeroParallax />
