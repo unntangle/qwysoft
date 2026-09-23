@@ -1,15 +1,19 @@
 "use client";
 
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { ArrowUp, MessageCircleMore, Sparkles, X } from "lucide-react";
+import { ArrowRight, MessageSquare, Minus, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { ACCELERATORS, SITE } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 
 /* ------------------------------------------------------------------
-   QWY AI assistant: a floating launcher bottom-right that opens a
-   rounded chat panel in the site's style (logo-purple header, soft
-   bubbles, suggested questions, typing dots, pill input).
+   QWY AI assistant, laid out like "Ask AWS" in QWY's brand colours:
+   - a dark rounded-square launcher bottom-right
+   - a panel whose gradient header (logo purple → magenta) carries the
+     title, an "AI" badge, a short intro and the question box
+   - "Want help getting started?" with gradient-bordered intent buttons
+   - once the chat starts, the header slims down and the input moves
+     to the bottom like a normal conversation
    Answers come from /api/chat (Claude) when ANTHROPIC_API_KEY is set;
    otherwise from the built-in answers below, drawn from the site copy.
 ------------------------------------------------------------------- */
@@ -17,14 +21,19 @@ import { cn } from "@/lib/utils";
 type Action = { label: string; href: string };
 type Msg = { role: "user" | "assistant"; content: string; actions?: Action[] };
 
-const SUGGESTIONS = ["What Odoo services do you offer?", "Can you build a custom app?", "How fast can we go live?", "Talk to the team"];
+const INTENTS = [
+  "I want to learn about Odoo ERP services",
+  "I need a custom web or mobile app",
+  "I'm looking for a dedicated tech team",
+  "I'd like to talk to the team",
+];
 
 const GREETING: Msg = {
   role: "assistant",
-  content:
-    "Hi! I'm the QWY assistant. Ask me about Odoo ERP, custom software, AI, dedicated teams or our pre-built platforms.",
+  content: "Hi! I'm the QWY assistant. Ask me about Odoo ERP, custom software, AI, dedicated teams or our pre-built platforms.",
 };
 
+const HEADER_BG = "bg-[linear-gradient(120deg,#33055f_0%,#5a0aa6_45%,#8f14a0_75%,#c3158a_100%)]";
 const ease = [0.22, 1, 0.36, 1] as const;
 
 export function ChatWidget() {
@@ -35,6 +44,7 @@ export function ChatWidget() {
   const [busy, setBusy] = useState(false);
   const listRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const started = messages.some((m) => m.role === "user");
 
   // Keep the newest message in view
   useEffect(() => {
@@ -81,9 +91,39 @@ export function ChatWidget() {
     }
     setMessages((m) => [...m, reply!]);
     setBusy(false);
+    setTimeout(() => inputRef.current?.focus(), 50);
   };
 
-  const showSuggestions = messages.length === 1 && !busy;
+  const inputBox = (dark: boolean) => (
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        send(input);
+      }}
+      className={cn(
+        "flex items-center gap-2 rounded-xl bg-white py-1.5 pl-4 pr-1.5 transition-shadow",
+        dark ? "shadow-[0_8px_20px_-12px_rgba(20,0,40,0.6)]" : "border border-line focus-within:border-[#c9b3f0]",
+      )}
+    >
+      <input
+        ref={inputRef}
+        value={input}
+        onChange={(e) => setInput(e.target.value)}
+        placeholder={started ? "Ask a follow-up…" : "Ask a question"}
+        aria-label="Message"
+        maxLength={500}
+        className="min-w-0 flex-1 bg-transparent py-1.5 text-[14.5px] text-ink outline-none placeholder:text-mute"
+      />
+      <button
+        type="submit"
+        disabled={!input.trim() || busy}
+        aria-label="Send"
+        className="grid size-8 shrink-0 cursor-pointer place-items-center rounded-full bg-[linear-gradient(135deg,#5a0aa6,#c3158a)] text-white transition-opacity disabled:cursor-default disabled:bg-none disabled:bg-[#c9c6cf]"
+      >
+        <ArrowRight className="size-4" strokeWidth={2.2} aria-hidden />
+      </button>
+    </form>
+  );
 
   return (
     <div className="fixed bottom-5 right-5 z-[60] flex flex-col items-end gap-3 sm:bottom-6 sm:right-6">
@@ -92,140 +132,139 @@ export function ChatWidget() {
         {open && (
           <motion.div
             role="dialog"
-            aria-label="QWY assistant"
+            aria-label="Ask QWY"
             initial={reduce ? { opacity: 0 } : { opacity: 0, y: 16, scale: 0.96 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={reduce ? { opacity: 0 } : { opacity: 0, y: 12, scale: 0.97 }}
             transition={{ duration: 0.35, ease }}
             style={{ transformOrigin: "100% 100%" }}
-            className="flex h-[min(600px,calc(100vh-7.5rem))] w-[min(380px,calc(100vw-2.5rem))] flex-col overflow-hidden rounded-[28px] border border-line bg-white shadow-[0_40px_80px_-30px_rgba(40,10,90,0.45),0_12px_24px_-12px_rgba(40,10,90,0.18)]"
+            className="flex h-[min(620px,calc(100vh-7.5rem))] w-[min(400px,calc(100vw-2.5rem))] flex-col overflow-hidden rounded-2xl border border-line bg-white shadow-[0_40px_80px_-30px_rgba(40,10,90,0.45),0_12px_24px_-12px_rgba(40,10,90,0.18)]"
           >
-            {/* Header */}
-            <div className="relative overflow-hidden bg-[linear-gradient(135deg,#33055f_0%,#5a0aa6_55%,#7a2fd4_100%)] px-5 pb-5 pt-5 text-white">
+            {/* Header: large with the question box before the chat starts, slim after */}
+            <div className={cn("relative overflow-hidden text-white", HEADER_BG, started ? "px-5 py-4" : "rounded-b-2xl px-5 pb-5 pt-5")}>
               <div
                 aria-hidden
-                className="absolute -right-10 -top-16 size-44 rounded-full bg-[radial-gradient(closest-side,rgba(255,143,196,0.45),transparent)]"
+                className="absolute -right-12 -top-16 size-52 rounded-full bg-[radial-gradient(closest-side,rgba(255,31,107,0.35),transparent)]"
               />
-              <div className="relative flex items-start justify-between gap-3">
-                <div className="flex items-center gap-3">
-                  <span className="grid size-10 place-items-center rounded-2xl bg-white/15 ring-1 ring-white/25">
-                    <Sparkles className="size-5" strokeWidth={1.75} aria-hidden />
+              <button
+                type="button"
+                onClick={() => setOpen(false)}
+                aria-label="Minimise chat"
+                className={cn(
+                  "absolute right-3 z-10 grid size-8 cursor-pointer place-items-center rounded-lg text-white/85 transition-colors hover:bg-white/15 hover:text-white",
+                  started ? "top-1/2 -translate-y-1/2" : "top-3",
+                )}
+              >
+                <Minus className="size-5" strokeWidth={2.4} aria-hidden />
+              </button>
+
+              <div className="relative pr-10">
+                <p className="flex items-center gap-2.5">
+                  <span className={cn("font-semibold tracking-[-0.01em]", started ? "text-[17px]" : "text-[20px]")}>Ask QWY</span>
+                  <span className="rounded-md border border-white/70 bg-white px-1.5 py-0.5 text-[11px] font-semibold leading-none text-[#5a0aa6]">
+                    AI
                   </span>
-                  <div>
-                    <p className="text-[15px] font-medium leading-tight">QWY Assistant</p>
-                    <p className="mt-0.5 flex items-center gap-1.5 text-[12px] text-white/70">
-                      <span className="size-1.5 rounded-full bg-[#7fe0bd]" /> Online · replies instantly
-                    </p>
-                  </div>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => setOpen(false)}
-                  aria-label="Close chat"
-                  className="grid size-8 cursor-pointer place-items-center rounded-full text-white/80 transition-colors hover:bg-white/15 hover:text-white"
-                >
-                  <X className="size-4" aria-hidden />
-                </button>
+                </p>
+                {!started && (
+                  <p className="mt-1.5 text-[13.5px] leading-relaxed text-white/80">
+                    Quick guidance on Odoo ERP, custom software and AI.
+                  </p>
+                )}
               </div>
+              {!started && <div className="relative mt-4">{inputBox(true)}</div>}
             </div>
 
-            {/* Messages */}
-            <div ref={listRef} className="flex-1 space-y-3 overflow-y-auto bg-[#faf9fc] px-4 py-5" aria-live="polite">
-              {messages.map((m, i) => (
-                <motion.div
-                  key={i}
-                  initial={reduce ? false : { opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3, ease }}
-                  className={cn("flex flex-col", m.role === "user" ? "items-end" : "items-start")}
-                >
-                  <div
-                    className={cn(
-                      "max-w-[85%] whitespace-pre-line px-4 py-2.5 text-[14px] leading-relaxed",
-                      m.role === "user"
-                        ? "rounded-[20px] rounded-br-md bg-[linear-gradient(135deg,#5a0aa6,#7a2fd4)] text-white"
-                        : "rounded-[20px] rounded-bl-md border border-line bg-white text-ink",
-                    )}
+            {/* Body */}
+            {!started ? (
+              <div className="flex-1 overflow-y-auto px-6 pb-4 pt-6">
+                <p className="text-[15.5px] font-medium text-ink">Want help getting started?</p>
+                <p className="mt-1.5 text-[14.5px] text-ink-soft">Tell us a little bit about what you&rsquo;re looking for.</p>
+                <ul className="mt-4 flex flex-col items-start gap-2">
+                  {INTENTS.map((t, i) => (
+                    <motion.li
+                      key={t}
+                      initial={reduce ? false : { opacity: 0, y: 8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.1 + i * 0.06, duration: 0.35, ease }}
+                    >
+                      <button
+                        type="button"
+                        onClick={() => send(t)}
+                        className="cursor-pointer rounded-full border border-[#e6dcf2] bg-[#faf7fd] px-3.5 py-1.5 text-left text-[13px] text-ink-soft transition-colors duration-200 hover:border-[#cdb6ee] hover:bg-[#f4edfc] hover:text-[#5a0aa6]"
+                      >
+                        {t}
+                      </button>
+                    </motion.li>
+                  ))}
+                </ul>
+              </div>
+            ) : (
+              <div ref={listRef} className="flex-1 space-y-3 overflow-y-auto bg-[#faf9fc] px-4 py-5" aria-live="polite">
+                {messages.map((m, i) => (
+                  <motion.div
+                    key={i}
+                    initial={reduce ? false : { opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3, ease }}
+                    className={cn("flex flex-col", m.role === "user" ? "items-end" : "items-start")}
                   >
-                    {m.content}
-                  </div>
-                  {m.actions && m.actions.length > 0 && (
-                    <div className="mt-2 flex flex-wrap gap-1.5">
-                      {m.actions.map((a) => (
-                        <a
-                          key={a.label}
-                          href={a.href}
-                          onClick={() => a.href.startsWith("#") && setOpen(false)}
-                          className="rounded-full border border-[#e3d6f7] bg-white px-3 py-1.5 text-[12.5px] font-medium text-[#5a0aa6] transition-colors hover:bg-[#f4edfd]"
-                        >
-                          {a.label}
-                        </a>
+                    <div
+                      className={cn(
+                        "max-w-[85%] whitespace-pre-line px-4 py-2.5 text-[14px] leading-relaxed",
+                        m.role === "user"
+                          ? "rounded-2xl rounded-br-md bg-[linear-gradient(135deg,#5a0aa6,#8f14a0)] text-white"
+                          : "rounded-2xl rounded-bl-md border border-line bg-white text-ink",
+                      )}
+                    >
+                      {m.content}
+                    </div>
+                    {m.actions && m.actions.length > 0 && (
+                      <div className="mt-2 flex flex-wrap gap-1.5">
+                        {m.actions.map((a) => (
+                          <a
+                            key={a.label}
+                            href={a.href}
+                            onClick={() => a.href.startsWith("#") && setOpen(false)}
+                            className="rounded-lg bg-[linear-gradient(95deg,#5a0aa6,#c3158a)] p-px text-[12.5px] font-medium"
+                          >
+                            <span className="block rounded-[7px] bg-white px-3 py-1.5 text-[#5a0aa6] transition-colors hover:bg-[#f6effd]">
+                              {a.label}
+                            </span>
+                          </a>
+                        ))}
+                      </div>
+                    )}
+                  </motion.div>
+                ))}
+
+                {busy && (
+                  <div className="flex items-start">
+                    <div className="flex gap-1 rounded-2xl rounded-bl-md border border-line bg-white px-4 py-3.5" aria-label="Assistant is typing">
+                      {[0, 1, 2].map((d) => (
+                        <motion.span
+                          key={d}
+                          className="size-1.5 rounded-full bg-[#8f14a0]"
+                          animate={reduce ? undefined : { opacity: [0.3, 1, 0.3], y: [0, -2, 0] }}
+                          transition={{ duration: 1, repeat: Infinity, delay: d * 0.15 }}
+                        />
                       ))}
                     </div>
-                  )}
-                </motion.div>
-              ))}
-
-              {busy && (
-                <div className="flex items-start">
-                  <div className="flex gap-1 rounded-[20px] rounded-bl-md border border-line bg-white px-4 py-3.5" aria-label="Assistant is typing">
-                    {[0, 1, 2].map((d) => (
-                      <motion.span
-                        key={d}
-                        className="size-1.5 rounded-full bg-[#7a2fd4]"
-                        animate={reduce ? undefined : { opacity: [0.3, 1, 0.3], y: [0, -2, 0] }}
-                        transition={{ duration: 1, repeat: Infinity, delay: d * 0.15 }}
-                      />
-                    ))}
                   </div>
-                </div>
-              )}
-
-              {showSuggestions && (
-                <div className="flex flex-wrap gap-1.5 pt-1">
-                  {SUGGESTIONS.map((s) => (
-                    <button
-                      key={s}
-                      type="button"
-                      onClick={() => send(s)}
-                      className="cursor-pointer rounded-full border border-line bg-white px-3 py-1.5 text-[12.5px] text-ink-soft transition-colors hover:border-[#d9c6f4] hover:text-[#5a0aa6]"
-                    >
-                      {s}
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            {/* Input */}
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                send(input);
-              }}
-              className="border-t border-line bg-white p-3"
-            >
-              <div className="flex items-center gap-2 rounded-full border border-line bg-[#faf9fc] py-1.5 pl-4 pr-1.5 transition-colors focus-within:border-[#c9b3f0]">
-                <input
-                  ref={inputRef}
-                  value={input}
-                  onChange={(e) => setInput(e.target.value)}
-                  placeholder="Ask anything about QWY…"
-                  aria-label="Message"
-                  maxLength={500}
-                  className="min-w-0 flex-1 bg-transparent text-[14px] text-ink outline-none placeholder:text-mute"
-                />
-                <button
-                  type="submit"
-                  disabled={!input.trim() || busy}
-                  aria-label="Send"
-                  className="grid size-9 shrink-0 place-items-center rounded-full bg-[linear-gradient(135deg,#5a0aa6,#7a2fd4)] text-white transition-opacity disabled:opacity-35"
-                >
-                  <ArrowUp className="size-4" strokeWidth={2.2} aria-hidden />
-                </button>
+                )}
               </div>
-              <p className="mt-2 text-center text-[11px] text-mute">AI answers can be imperfect. For quotes, talk to our team.</p>
-            </form>
+            )}
+
+            {/* Footer */}
+            <div className="border-t border-line bg-white px-4 pb-3 pt-3">
+              {started && <div className="mb-2.5">{inputBox(false)}</div>}
+              <p className="text-center text-[12px] text-ink-soft">
+                By chatting, you agree to our{" "}
+                <a href="/privacy" className="font-medium text-[#8f14a0] hover:underline">
+                  privacy policy
+                </a>
+                .
+              </p>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
@@ -250,11 +289,8 @@ export function ChatWidget() {
           onClick={() => setOpen((o) => !o)}
           aria-label={open ? "Close chat" : "Open chat with QWY assistant"}
           aria-expanded={open}
-          className="relative grid size-14 cursor-pointer place-items-center rounded-full bg-[linear-gradient(135deg,#ff1f6b_0%,#c3158a_45%,#5a0aa6_100%)] text-white shadow-[0_16px_32px_-12px_rgba(90,10,166,0.6)] transition-transform duration-300 hover:scale-105"
+          className="relative grid size-14 cursor-pointer place-items-center rounded-2xl bg-[#17213a] text-white shadow-[0_14px_28px_-12px_rgba(23,33,58,0.6)] transition-[translate,background-color] duration-300 hover:-translate-y-0.5 hover:bg-[#1f2b4a]"
         >
-          {!open && !reduce && (
-            <span aria-hidden className="absolute inset-0 animate-ping rounded-full bg-[#c3158a]/30 [animation-duration:2.6s]" />
-          )}
           <AnimatePresence mode="wait" initial={false}>
             <motion.span
               key={open ? "x" : "s"}
@@ -264,7 +300,7 @@ export function ChatWidget() {
               transition={{ duration: 0.2 }}
               className="relative"
             >
-              {open ? <X className="size-6" aria-hidden /> : <MessageCircleMore className="size-6" strokeWidth={1.75} aria-hidden />}
+              {open ? <X className="size-5" aria-hidden /> : <MessageSquare className="size-5" strokeWidth={1.9} aria-hidden />}
             </motion.span>
           </AnimatePresence>
         </button>
@@ -282,7 +318,7 @@ const CONSULT: Action = { label: "Get a free consultation", href: "#contact" };
 function actionsFor(text: string): Action[] {
   const q = text.toLowerCase();
   if (has(q, ["odoo", "erp"])) return [{ label: "See Odoo services", href: "#solutions" }, CONSULT];
-  if (has(q, ["platform", "accelerator", "fleet", "e-commerce", "ecommerce", "crm", "hrms", "marketplace", "go live", "live"]))
+  if (has(q, ["platform", "accelerator", "fleet", "e-commerce", "ecommerce", "crm", "hrms", "marketplace", "go live"]))
     return [{ label: "See pre-built platforms", href: "#accelerators" }, CONSULT];
   if (has(q, ["team", "hire", "developer", "engineer", "qa", "devops"])) return [{ label: "See dedicated teams", href: "#teams" }, CONSULT];
   if (/\b(app|apps|web|mobile|ai|ml)\b/.test(q) || has(q, ["custom", "machine learning"])) return [{ label: "See custom software", href: "#capabilities" }, CONSULT];
@@ -292,7 +328,7 @@ function actionsFor(text: string): Action[] {
 function localReply(text: string): Msg {
   const q = text.toLowerCase();
 
-  if (has(q, ["talk", "contact", "call", "phone", "email", "reach", "speak", "whatsapp", "team"]) && !has(q, ["dedicated", "hire"])) {
+  if (has(q, ["talk", "contact", "call", "phone", "email", "reach", "speak", "whatsapp", "team"]) && !has(q, ["dedicated", "hire", "tech team"])) {
     return {
       role: "assistant",
       content: `You can reach the team at ${SITE.email} or ${SITE.phone}. We're also on WhatsApp, and a free consultation is a great place to start.`,
@@ -326,7 +362,7 @@ function localReply(text: string): Msg {
       actions: actionsFor("odoo"),
     };
   }
-  if (has(q, ["dedicated", "hire", "developer", "engineer", "qa", "devops", "resource"])) {
+  if (has(q, ["dedicated", "hire", "developer", "engineer", "qa", "devops", "resource", "tech team"])) {
     return {
       role: "assistant",
       content:
