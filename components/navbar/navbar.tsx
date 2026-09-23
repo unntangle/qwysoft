@@ -132,13 +132,17 @@ export function Navbar() {
               target="_blank"
               rel="noopener noreferrer"
               title="Odoo Silver Partner"
-              className={cn(
-                "hidden shrink-0 items-center rounded-md transition-colors sm:flex",
-                scrolled && dark && !open ? "bg-white px-1.5 py-1" : "",
-              )}
+              className="hidden shrink-0 items-center sm:flex"
             >
-              {/* odoo-logo-header.webp has wide padding; crop to the artwork (≈19–82% × 33.5–66%) */}
-              <span className="block shrink-0 overflow-hidden" style={{ width: 100, height: 48 }}>
+              {/* odoo-logo-header.webp has wide padding; crop to the artwork (≈19–82% × 33.5–66%).
+                  Once scrolled it steps back: smaller and quieter, and over dark sections a soft white silhouette. */}
+              <span
+                className={cn(
+                  "block shrink-0 origin-left overflow-hidden transition-[opacity,scale] duration-500 hover:opacity-100",
+                  scrolled ? "scale-[0.85] opacity-65" : "",
+                )}
+                style={{ width: 100, height: 48 }}
+              >
                 <Image
                   src="/brand/odoo-logo-header.webp"
                   alt="Odoo Silver Partner"
@@ -146,7 +150,10 @@ export function Navbar() {
                   height={1060}
                   sizes="150px"
                   priority
-                  className={cn("block max-w-none", !(scrolled && dark && !open) && "mix-blend-multiply")}
+                  className={cn(
+                    "block max-w-none",
+                    scrolled && dark && !open ? "brightness-0 invert" : "mix-blend-multiply",
+                  )}
                   style={{ width: 146, height: 136, marginTop: -43.5, marginLeft: -23.5 }}
                 />
               </span>
