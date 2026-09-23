@@ -37,8 +37,6 @@ export function Navbar() {
   const [open, setOpen] = useState<string | null>(null);
   const [mobile, setMobile] = useState(false);
   const [hovered, setHovered] = useState<string | null>(null);
-  // Smart header: tucks away while scrolling down, glides back on any scroll up
-  const [hidden, setHidden] = useState(false);
   const reduce = useReducedMotion();
   // Scroll progress for the gradient line along the bottom of the bar
   const { scrollYProgress } = useScroll();
@@ -55,18 +53,11 @@ export function Navbar() {
     // Checked at most once per animation frame, and state only changes when the answer does,
     // so scrolling never queues extra layout work or re-renders.
     let frame = 0;
-    let lastY = window.scrollY;
     const check = () => {
       frame = 0;
-      const y = window.scrollY;
-      setScrolled(y > 24);
+      setScrolled(window.scrollY > 24);
       const under = document.elementsFromPoint(window.innerWidth / 2, 40).find((el) => !el.closest("header"));
       setDark(Boolean(under?.closest("[data-nav='dark']")));
-      // Hide when reading downwards, show on any upward scroll (small deltas are ignored)
-      if (y < 160) setHidden(false);
-      else if (y > lastY + 6) setHidden(true);
-      else if (y < lastY - 6) setHidden(false);
-      if (Math.abs(y - lastY) > 6) lastY = y;
     };
     const onScroll = () => {
       if (!frame) frame = requestAnimationFrame(check);
@@ -128,12 +119,7 @@ export function Navbar() {
   const active = NAV.find((g) => g.label === open);
 
   return (
-    <header
-      className={cn(
-        "fixed inset-x-0 top-0 z-50 transition-[translate] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]",
-        hidden && !open && !mobile && "-translate-y-full",
-      )}
-    >
+    <header className="fixed inset-x-0 top-0 z-50">
       <div
         className={cn(
           "relative transition-[background-color,box-shadow] duration-500",

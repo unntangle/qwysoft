@@ -148,7 +148,7 @@ export function CoreServices() {
                 {/* Progress rail */}
                 <div className="relative w-[2px] shrink-0 overflow-hidden rounded-full bg-line">
                   <motion.span
-                    className="absolute inset-0 origin-top bg-[linear-gradient(180deg,#ff1f6b,#8f5cff)]"
+                    className="absolute inset-0 origin-top bg-[linear-gradient(180deg,#7a2fd4,#b39cff)]"
                     style={{ scaleY: scrollYProgress }}
                   />
                 </div>
@@ -261,7 +261,7 @@ function Console({ active, progress }: { active: number; progress: MotionValue<n
         <div aria-hidden className="grid-night absolute inset-0 opacity-70" />
         <div
           aria-hidden
-          className="absolute -right-24 -top-24 size-72 rounded-full bg-[radial-gradient(closest-side,rgba(255,31,107,0.35),transparent)] blur-2xl"
+          className="absolute -right-24 -top-24 size-72 rounded-full bg-[radial-gradient(closest-side,rgba(143,92,255,0.35),transparent)] blur-2xl"
         />
 
         {/* Title bar */}
@@ -317,7 +317,7 @@ function Pipeline({ progress }: { progress: MotionValue<number> }) {
       <div className="relative mt-4">
         <div className="absolute left-[7px] right-[7px] top-[7px] h-px bg-white/10" />
         <motion.div
-          className="absolute left-[7px] right-[7px] top-[7px] h-px origin-left bg-[linear-gradient(90deg,#ff1f6b,#8f5cff)]"
+          className="absolute left-[7px] right-[7px] top-[7px] h-px origin-left bg-[linear-gradient(90deg,#7a2fd4,#b39cff)]"
           style={{ scaleX: progress }}
         />
         <ol className="relative flex justify-between">
@@ -333,7 +333,7 @@ function Pipeline({ progress }: { progress: MotionValue<number> }) {
 function PipelineStep({ label, index, progress }: { label: string; index: number; progress: MotionValue<number> }) {
   const at = index / (STEPS.length - 1);
   const on = useTransform<number, number>(progress, (v) => (v >= at - 0.02 ? 1 : 0));
-  const dot = useTransform<number, string>(on, [0, 1], ["rgba(255,255,255,0.14)", "#ff3d86"]);
+  const dot = useTransform<number, string>(on, [0, 1], ["rgba(255,255,255,0.14)", "#b39cff"]);
   const text = useTransform<number, number>(on, [0, 1], [0.45, 1]);
   const last = index === STEPS.length - 1;
   return (
@@ -514,7 +514,7 @@ function AiVisual() {
             <motion.circle
               key={p}
               r={3}
-              fill="#ff3d86"
+              fill="#b39cff"
               initial={{ opacity: 0 }}
               animate={{
                 cx: [40, 150, 260],
@@ -533,7 +533,7 @@ function AiVisual() {
                 transition={{ duration: 0.35, delay: li * 0.25 + yi * 0.05, ease }}
                 style={{ transformOrigin: `${l.x}px ${y}px` }}
               >
-                <circle cx={l.x} cy={y} r={7} fill="#1b1440" stroke={li === 2 && yi === 1 ? "#ff3d86" : "#a898f2"} strokeWidth={1.5} />
+                <circle cx={l.x} cy={y} r={7} fill="#1b1440" stroke={li === 2 && yi === 1 ? "#b39cff" : "#a898f2"} strokeWidth={1.5} />
                 {l.labels && (
                   <text
                     x={li === 0 ? l.x - 12 : l.x + 12}
@@ -562,7 +562,7 @@ function AiVisual() {
               </div>
               <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-white/10">
                 <motion.div
-                  className="h-full rounded-full bg-[linear-gradient(90deg,#8f5cff,#ff3d86)]"
+                  className="h-full rounded-full bg-[linear-gradient(90deg,#7a2fd4,#b39cff)]"
                   initial={{ width: 0 }}
                   animate={{ width: `${r.v * 100}%` }}
                   transition={{ duration: 0.9, delay: 0.9 + i * 0.15, ease }}
@@ -694,7 +694,7 @@ function PlatformVisual() {
         </div>
         <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-white/10">
           <motion.div
-            className="h-full rounded-full bg-[linear-gradient(90deg,#ff1f6b,#8f5cff)]"
+            className="h-full rounded-full bg-[linear-gradient(90deg,#7a2fd4,#b39cff)]"
             initial={{ width: 0 }}
             animate={{ width: "100%" }}
             transition={{ duration: 2.2, delay: 0.3, ease: "easeInOut" }}

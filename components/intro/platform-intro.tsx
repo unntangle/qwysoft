@@ -53,7 +53,7 @@ export function PlatformIntro() {
   return (
     <section id="platform" className="relative overflow-hidden pb-10 pt-8 sm:pb-12 sm:pt-8" aria-labelledby="platform-title">
       <Container>
-        <div className="grid items-center gap-16 lg:grid-cols-12 lg:gap-10">
+        <div className="grid items-center gap-16 lg:grid-cols-12 lg:gap-x-20">
           <div className="lg:col-span-5 lg:col-start-8 lg:row-start-1">
             <p className="kicker mb-6">How it fits together</p>
             <h2 id="platform-title" className="display display-sm">
