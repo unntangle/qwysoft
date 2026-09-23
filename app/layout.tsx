@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import { ChatWidget } from "@/components/chat/chat-widget";
 import { MotionProvider } from "@/components/ui/motion-provider";
 import { googleSans, googleSansCode } from "@/lib/fonts";
 import { SITE } from "@/lib/constants";
@@ -83,7 +84,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         >
           Skip to content
         </a>
-        <MotionProvider>{children}</MotionProvider>
+        <MotionProvider>
+          {children}
+          <ChatWidget />
+        </MotionProvider>
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       </body>
     </html>

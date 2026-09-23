@@ -40,7 +40,7 @@ export function HeroComposition() {
 
   return (
     <div ref={ref} className="relative mx-auto mt-16 w-full max-w-[1180px] lg:mt-20">
-      <motion.div style={{ y: yConsole }} {...arrive(0.35)} className="relative z-10 lg:mx-[4%]">
+      <motion.div style={{ y: yConsole }} {...arrive(0.35)} className="relative z-10 will-change-transform lg:mx-[4%]">
         <Console />
       </motion.div>
 
@@ -49,17 +49,17 @@ export function HeroComposition() {
         <motion.div
           style={{ y: yFast }}
           {...arrive(0.9, 24)}
-          className="relative z-20 lg:absolute lg:-right-6 lg:top-[-7%] xl:-right-10"
+          className="relative z-20 will-change-transform lg:absolute lg:-right-6 lg:top-[-7%] xl:-right-10"
         >
           <InsightCard />
         </motion.div>
-        <motion.div style={{ y: ySlow }} {...arrive(1.1, -24)} className="relative z-20 lg:absolute lg:-left-8 lg:top-[38%] xl:-left-14">
+        <motion.div style={{ y: ySlow }} {...arrive(1.1, -24)} className="relative z-20 will-change-transform lg:absolute lg:-left-8 lg:top-[38%] xl:-left-14">
           <AutomationCard />
         </motion.div>
-        <motion.div style={{ y: yFast }} {...arrive(1.3)} className="relative z-20 hidden sm:block lg:absolute lg:-bottom-16 lg:left-[14%]">
+        <motion.div style={{ y: yFast }} {...arrive(1.3)} className="relative z-20 hidden will-change-transform sm:block lg:absolute lg:-bottom-16 lg:left-[14%]">
           <SyncCard />
         </motion.div>
-        <motion.div style={{ y: ySlow }} {...arrive(1.45)} className="relative z-20 hidden sm:block lg:absolute lg:-bottom-10 lg:right-[6%]">
+        <motion.div style={{ y: ySlow }} {...arrive(1.45)} className="relative z-20 hidden will-change-transform sm:block lg:absolute lg:-bottom-10 lg:right-[6%]">
           <FleetCard />
         </motion.div>
       </div>

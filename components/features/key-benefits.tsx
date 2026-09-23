@@ -125,7 +125,7 @@ export function KeyBenefits() {
                   {/* Motif */}
                   <div
                     className={cn(
-                      "transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:-rotate-3 group-hover:scale-110",
+                      "transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-105",
                       b.big ? "size-40 sm:size-48" : "size-16",
                     )}
                   >
@@ -156,24 +156,42 @@ export function KeyBenefits() {
   );
 }
 
-/** Small flat geometric motifs, one per benefit, drawn in the card's own ink and soft tint */
+/** Small flat geometric motifs, one per benefit, drawn in the card's own ink and soft tint.
+    Each has a looping animation that runs only while the card is hovered (see .kb-* in globals.css). */
 function MotifArt({ kind, ink, soft }: { kind: Motif; ink: string; soft: string }) {
-  const common = { viewBox: "0 0 64 64", className: "h-full w-full", "aria-hidden": true } as const;
+  const common = { viewBox: "0 0 64 64", className: "h-full w-full overflow-visible", "aria-hidden": true } as const;
+  const d = (s: number) => ({ animationDelay: `${s}s` });
   switch (kind) {
     case "squares":
       return (
         <svg {...common}>
           {[0, 1, 2, 3, 4].map((k) => (
-            <rect key={k} x={4 + k * 5} y={4 + k * 5} width={56 - k * 10} height={56 - k * 10} rx={6 - k} fill="none" stroke={k === 4 ? ink : soft} strokeWidth="1.4" />
+            <rect
+              key={k}
+              className="kb-ripple"
+              style={d(k * 0.12)}
+              x={4 + k * 5}
+              y={4 + k * 5}
+              width={56 - k * 10}
+              height={56 - k * 10}
+              rx={6 - k}
+              fill="none"
+              stroke={k === 4 ? ink : soft}
+              strokeWidth="1.4"
+            />
           ))}
-          <rect x="27" y="27" width="10" height="10" rx="2" fill={ink} />
+          <rect className="kb-ping" x="27" y="27" width="10" height="10" rx="2" fill={ink} />
         </svg>
       );
     case "code":
       return (
         <svg {...common}>
           <rect x="4" y="10" width="56" height="44" rx="8" fill={soft} />
-          <path d="M24 26 l-7 6 7 6 M40 26 l7 6 -7 6 M35 22 l-6 20" fill="none" stroke={ink} strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
+          <g fill="none" stroke={ink} strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+            <path className="kb-nudge-l" d="M24 26 l-7 6 7 6" />
+            <path className="kb-nudge-r" d="M40 26 l7 6 -7 6" />
+            <path className="kb-blink" d="M35 22 l-6 20" />
+          </g>
         </svg>
       );
     case "blocks":
@@ -181,7 +199,7 @@ function MotifArt({ kind, ink, soft }: { kind: Motif; ink: string; soft: string 
         <svg {...common}>
           <rect x="6" y="30" width="24" height="24" rx="5" fill={soft} />
           <rect x="34" y="30" width="24" height="24" rx="5" fill={soft} />
-          <rect x="20" y="6" width="24" height="24" rx="5" fill={ink} />
+          <rect className="kb-bounce" x="20" y="6" width="24" height="24" rx="5" fill={ink} />
         </svg>
       );
     case "people":
@@ -192,7 +210,7 @@ function MotifArt({ kind, ink, soft }: { kind: Motif; ink: string; soft: string 
             [32, 18],
             [48, 22],
           ].map(([x, y], k) => (
-            <g key={k}>
+            <g key={k} className="kb-bob" style={d(k * 0.18)}>
               <circle cx={x} cy={y} r="7" fill={k === 1 ? ink : soft} />
               <path d={`M${x - 11} ${y + 28} a11 11 0 0 1 22 0`} fill={k === 1 ? ink : soft} />
             </g>
@@ -203,18 +221,30 @@ function MotifArt({ kind, ink, soft }: { kind: Motif; ink: string; soft: string 
       return (
         <svg {...common}>
           {[0, 1, 2, 3].map((k) => (
-            <rect key={k} x={6 + k * 13} y={46 - k * 12} width="11" height={12 + k * 12} rx="3" fill={k === 3 ? ink : soft} />
+            <rect
+              key={k}
+              className="kb-grow"
+              style={d(k * 0.14)}
+              x={6 + k * 13}
+              y={46 - k * 12}
+              width="11"
+              height={12 + k * 12}
+              rx="3"
+              fill={k === 3 ? ink : soft}
+            />
           ))}
         </svg>
       );
     case "links":
       return (
         <svg {...common}>
-          <path d="M14 32 H50" stroke={soft} strokeWidth="2" strokeDasharray="3 4" />
+          <g stroke={soft} strokeWidth="2" strokeDasharray="3 4" className="kb-dash">
+            <path d="M14 32 H50" />
+            <path d="M32 22 V8 M32 42 V56" />
+          </g>
           {[14, 32, 50].map((x, k) => (
-            <circle key={x} cx={x} cy="32" r={k === 1 ? 10 : 7} fill={k === 1 ? ink : soft} />
+            <circle key={x} className={k === 1 ? "kb-ping" : ""} cx={x} cy="32" r={k === 1 ? 10 : 7} fill={k === 1 ? ink : soft} />
           ))}
-          <path d="M32 22 V8 M32 42 V56" stroke={soft} strokeWidth="2" strokeDasharray="3 4" />
           <circle cx="32" cy="8" r="4" fill={soft} />
           <circle cx="32" cy="56" r="4" fill={soft} />
         </svg>
@@ -222,16 +252,27 @@ function MotifArt({ kind, ink, soft }: { kind: Motif; ink: string; soft: string 
     case "gears":
       return (
         <svg {...common}>
-          <circle cx="26" cy="28" r="14" fill="none" stroke={soft} strokeWidth="6" strokeDasharray="5 4" />
-          <circle cx="26" cy="28" r="5" fill={ink} />
-          <circle cx="46" cy="46" r="9" fill="none" stroke={ink} strokeWidth="4" strokeDasharray="4 3" />
+          <g className="kb-spin">
+            <circle cx="26" cy="28" r="14" fill="none" stroke={soft} strokeWidth="6" strokeDasharray="5 4" />
+            <circle cx="26" cy="28" r="5" fill={ink} />
+          </g>
+          <circle className="kb-spin-rev" cx="46" cy="46" r="9" fill="none" stroke={ink} strokeWidth="4" strokeDasharray="4 3" />
         </svg>
       );
     case "pulse":
       return (
         <svg {...common}>
           <rect x="4" y="8" width="56" height="48" rx="8" fill={soft} />
-          <path d="M10 36 H20 L25 24 L32 44 L38 30 L42 36 H54" fill="none" stroke={ink} strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
+          <path
+            className="kb-trace"
+            pathLength={100}
+            d="M10 36 H20 L25 24 L32 44 L38 30 L42 36 H54"
+            fill="none"
+            stroke={ink}
+            strokeWidth="2.4"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
         </svg>
       );
   }

@@ -79,7 +79,7 @@ export function PlatformIntro() {
               {LAYERS.map((l, i) => (
                 <motion.div
                   key={l.name}
-                  className={`relative rounded-[22px] border bg-gradient-to-br p-5 sm:p-6 ${["sm:mr-[12%]", "sm:mx-[6%]", "sm:ml-[12%]"][i]} ${l.tint} ${
+                  className={`relative rounded-[22px] border bg-gradient-to-br p-5 will-change-transform sm:p-6 ${["sm:mr-[12%]", "sm:mx-[6%]", "sm:ml-[12%]"][i]} ${l.tint} ${
                     l.dark ? "border-white/10 text-white" : "border-line text-ink"
                   } shadow-[var(--shadow-panel)]`}
                   style={{

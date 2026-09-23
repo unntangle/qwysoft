@@ -189,7 +189,7 @@ function StackCard({ c, i, n, progress }: { c: Chapter; i: number; n: number; pr
         viewport={{ once: true, amount: 0.2 }}
         transition={{ duration: 0.7, ease }}
         style={reduce ? undefined : { scale, transformOrigin: "50% 0%" }}
-        className="h-full rounded-2xl border border-line bg-white p-2 shadow-[0_-18px_40px_-34px_rgba(23,19,31,0.25)]"
+        className="h-full rounded-2xl border border-line bg-white p-2 shadow-[0_-18px_40px_-34px_rgba(23,19,31,0.25)] will-change-transform"
       >
         <div className="grid h-full gap-2 lg:grid-cols-[0.9fr_1.1fr]">
           {/* Flat illustration, filling the panel */}

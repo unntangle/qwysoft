@@ -155,7 +155,7 @@ function Pipeline({ t }: { t: Tone }) {
         <rect x="400" y="130" width="126" height="40" rx="20" />
       </g>
       <path d={d} fill="none" stroke={t.wash} strokeWidth="16" strokeLinecap="round" opacity="0.5" />
-      <path d={d} fill="none" stroke={t.ink} strokeWidth="2" strokeDasharray="6 8" className="animate-flow" />
+      <path d={d} fill="none" stroke={t.ink} strokeWidth="2" strokeDasharray="6 4" className="animate-flow" />
       {nodes.map((n, i) => (
         <motion.g
           key={i}

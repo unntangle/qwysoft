@@ -78,7 +78,7 @@ export function Resources() {
             <Grad>Insights</Grad>
           </h2>
           <a href="#resources" className="group flex items-center gap-1.5 text-[15px] font-medium text-plum">
-            All articles
+            All Blogs
             <ArrowUpRight className="size-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" aria-hidden />
           </a>
         </div>

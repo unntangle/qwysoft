@@ -138,7 +138,9 @@
     background-size: 64px 64px;
   }
 
-  /* Film-grain noise — inline SVG, no network request. */
+  /* Film-grain noise — inline SVG, no network request.
+     No blend mode on purpose: a blended overlay makes the browser re-composite
+     everything beneath it on every animation frame, which caused scroll lag. */
   .grain {
     position: relative;
     isolation: isolate;
@@ -149,8 +151,8 @@
     inset: 0;
     pointer-events: none;
     z-index: 1;
-    opacity: 0.22;
-    mix-blend-mode: soft-light;
+    opacity: 0.07;
+    transform: translateZ(0);
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   }
 
@@ -200,7 +202,6 @@
 .trace-signal {
   stroke-dasharray: 0.12 1.3;
   animation: trace-signal 2.2s linear infinite both;
-  filter: drop-shadow(0 0 3px rgba(255, 31, 107, 0.7));
 }
 @keyframes trace-signal {
   from { stroke-dashoffset: 0.12; }
@@ -212,12 +213,56 @@
   from { transform: translate3d(0, 0, 0); }
   to { transform: translate3d(-50%, 0, 0); }
 }
-.animate-marquee { animation: marquee 55s linear infinite; }
-.animate-marquee-reverse { animation: marquee 55s linear infinite reverse; }
+.animate-marquee { animation: marquee 55s linear infinite; will-change: transform; }
+.animate-marquee-reverse { animation: marquee 55s linear infinite reverse; will-change: transform; }
 .marquee:hover .animate-marquee,
 .marquee:hover .animate-marquee-reverse {
   animation-play-state: paused;
 }
+
+/* ---------- Key benefits: motif animations, running only while a card is hovered ---------- */
+.kb-ripple, .kb-ping, .kb-nudge-l, .kb-nudge-r, .kb-bounce, .kb-bob, .kb-grow, .kb-spin, .kb-spin-rev {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.kb-grow { transform-origin: 50% 100%; }
+
+@keyframes kb-ripple { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(0.88); opacity: 0.45; } }
+@keyframes kb-ping { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.22); } }
+@keyframes kb-nudge-l { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(-3px); } }
+@keyframes kb-nudge-r { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(3px); } }
+@keyframes kb-blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.2; } }
+@keyframes kb-bounce { 0%, 100% { transform: translateY(0); } 45% { transform: translateY(-7px); } 60% { transform: translateY(0); } 70% { transform: translateY(-2px); } }
+@keyframes kb-bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+@keyframes kb-grow { 0%, 100% { transform: scaleY(1); } 50% { transform: scaleY(0.55); } }
+@keyframes kb-spin { to { transform: rotate(360deg); } }
+@keyframes kb-spin-rev { to { transform: rotate(-360deg); } }
+@keyframes kb-dash { to { stroke-dashoffset: -14; } }
+@keyframes kb-trace { from { stroke-dashoffset: 100; } to { stroke-dashoffset: 0; } }
+
+.group:hover .kb-ripple { animation: kb-ripple 1.6s ease-in-out infinite; }
+.group:hover .kb-ping { animation: kb-ping 1.2s ease-in-out infinite; }
+.group:hover .kb-nudge-l { animation: kb-nudge-l 1.2s ease-in-out infinite; }
+.group:hover .kb-nudge-r { animation: kb-nudge-r 1.2s ease-in-out infinite; }
+.group:hover .kb-blink { animation: kb-blink 0.9s ease-in-out infinite; }
+.group:hover .kb-bounce { animation: kb-bounce 1.1s ease-in-out infinite; }
+.group:hover .kb-bob { animation: kb-bob 1.1s ease-in-out infinite; }
+.group:hover .kb-grow { animation: kb-grow 1.3s ease-in-out infinite; }
+.group:hover .kb-spin { animation: kb-spin 3.2s linear infinite; }
+.group:hover .kb-spin-rev { animation: kb-spin-rev 2.1s linear infinite; }
+.group:hover .kb-dash { animation: kb-dash 0.7s linear infinite; }
+.group:hover .kb-trace { stroke-dasharray: 100; animation: kb-trace 1.6s ease-in-out infinite; }
+
+/* Pre-built platform illustrations: extra hover animations */
+.pa-spin-slow, .pa-drive {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+@keyframes pa-dash { to { stroke-dashoffset: -16; } }
+@keyframes pa-drive { 0%, 100% { transform: translateX(-8px); } 50% { transform: translateX(12px); } }
+.group:hover .pa-dash { animation: pa-dash 0.8s linear infinite; }
+.group:hover .pa-spin-slow { animation: kb-spin 9s linear infinite; }
+.group:hover .pa-drive { animation: pa-drive 1.8s ease-in-out infinite; }
 
 @keyframes pulse-dot {
   0% { box-shadow: 0 0 0 0 rgba(47, 158, 122, 0.45); }

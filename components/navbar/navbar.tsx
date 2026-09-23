@@ -29,14 +29,24 @@ export function Navbar() {
 
   useEffect(() => {
     // Switch to a dark bar while a dark section sits under the navbar.
-    const onScroll = () => {
+    // Checked at most once per animation frame, and state only changes when the answer does,
+    // so scrolling never queues extra layout work or re-renders.
+    let frame = 0;
+    const check = () => {
+      frame = 0;
       setScrolled(window.scrollY > 24);
       const under = document.elementsFromPoint(window.innerWidth / 2, 40).find((el) => !el.closest("header"));
       setDark(Boolean(under?.closest("[data-nav='dark']")));
     };
-    onScroll();
+    const onScroll = () => {
+      if (!frame) frame = requestAnimationFrame(check);
+    };
+    check();
     window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      if (frame) cancelAnimationFrame(frame);
+    };
   }, []);
 
   useEffect(() => {
@@ -91,13 +101,13 @@ export function Navbar() {
     <header className="fixed inset-x-0 top-0 z-50">
       <div
         className={cn(
-          "relative transition-[background-color,box-shadow,backdrop-filter] duration-500",
+          "relative transition-[background-color,box-shadow] duration-500",
           open
-            ? "bg-ivory/95 shadow-[0_1px_0_rgba(23,19,31,0.06)] backdrop-blur-xl"
+            ? "bg-ivory/95 shadow-[0_1px_0_rgba(23,19,31,0.06)] backdrop-blur-md"
             : scrolled && dark
-              ? "nav-dark bg-night/70 shadow-[0_1px_0_rgba(255,255,255,0.06)] backdrop-blur-xl backdrop-saturate-150"
+              ? "nav-dark bg-night/80 shadow-[0_1px_0_rgba(255,255,255,0.06)] backdrop-blur-md"
               : scrolled
-                ? "bg-ivory/80 shadow-[0_1px_0_rgba(23,19,31,0.06)] backdrop-blur-xl backdrop-saturate-150"
+                ? "bg-ivory/85 shadow-[0_1px_0_rgba(23,19,31,0.06)] backdrop-blur-md"
                 : "bg-transparent",
         )}
         onMouseLeave={scheduleClose}

@@ -67,20 +67,21 @@ function Ledger({ t }: { t: Tone }) {
           </motion.li>
         ))}
       </ul>
-      <svg viewBox="0 0 60 100" className="h-24 w-full" preserveAspectRatio="none" aria-hidden>
+      <svg viewBox="0 0 60 100" className="h-24 w-full min-w-[56px]" preserveAspectRatio="none" aria-hidden>
         {[16, 50, 84].map((y, i) => (
+          // Fade in (rather than draw in): a path-length animation fights the flowing dashes and flickers
           <motion.path
             key={y}
             d={`M0 ${y} C 30 ${y}, 30 50, 60 50`}
             fill="none"
             stroke={t.fill}
             strokeWidth="1.5"
-            strokeDasharray="3 4"
+            strokeDasharray="4 4"
             vectorEffect="non-scaling-stroke"
             className="animate-flow"
-            initial={{ pathLength: 0 }}
-            animate={{ pathLength: 1 }}
-            transition={{ delay: 0.3 + i * 0.1, duration: 0.6 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.3 + i * 0.1, duration: 0.5 }}
           />
         ))}
       </svg>

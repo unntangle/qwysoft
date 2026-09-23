@@ -347,7 +347,7 @@ export function IndustrySwitchboard() {
               </AnimatePresence>
 
               {/* Core → database */}
-              <path d={DB_TRACE} fill="none" stroke="#2f9e7a" strokeOpacity={0.55} strokeWidth={2} strokeDasharray="4 5" className="animate-flow" />
+              <path d={DB_TRACE} fill="none" stroke="#2f9e7a" strokeOpacity={0.55} strokeWidth={2} strokeDasharray="5 5" className="animate-flow" />
 
               {VIAS.map(([x, y]) => (
                 <circle key={`${x}-${y}`} cx={x} cy={y} r={3.5} fill="#fff" stroke="#d9d2e3" strokeWidth={1.5} />

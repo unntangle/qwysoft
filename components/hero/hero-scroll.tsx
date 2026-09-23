@@ -21,7 +21,7 @@ export function HeroFade({ children, className }: { children: React.ReactNode; c
   const y = useTransform(p, [0, 1], [0, -70]);
   const scale = useTransform(p, [0, 1], [1, 0.96]);
   return (
-    <motion.div ref={ref} className={className} style={reduce ? undefined : { opacity, y, scale }}>
+    <motion.div ref={ref} className={`will-change-transform ${className ?? ""}`} style={reduce ? undefined : { opacity, y, scale }}>
       {children}
     </motion.div>
   );
@@ -37,7 +37,7 @@ export function HeroRise({ children, className }: { children: React.ReactNode; c
   const y = useTransform(p, [0, 1], [90, 0]);
   return (
     <div ref={ref} className={className} style={{ perspective: 1600 }}>
-      <motion.div style={reduce ? undefined : { rotateX, scale, y, transformOrigin: "50% 100%" }}>{children}</motion.div>
+      <motion.div className="will-change-transform" style={reduce ? undefined : { rotateX, scale, y, transformOrigin: "50% 100%" }}>{children}</motion.div>
     </div>
   );
 }
@@ -54,7 +54,7 @@ export function HeroGlow({ className }: { className?: string }) {
     <motion.div
       ref={ref}
       aria-hidden
-      className={className}
+      className={`will-change-transform ${className ?? ""}`}
       style={reduce ? undefined : { opacity, y, scaleX }}
     />
   );
