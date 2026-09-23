@@ -36,7 +36,7 @@ const MAX_SHIFT = 10; // px the mark leans toward the cursor
 // edges sit outside the clipping window.
 const OVERSCAN = 1.04;
 
-export function FooterMark({ className }: { className?: string }) {
+export function FooterMark({ className, tone = "gradient" }: { className?: string; tone?: "gradient" | "white" }) {
   const ref = useRef<HTMLDivElement>(null);
   const frame = useRef<number | null>(null);
   const visible = BOTTOM - TOP;
@@ -91,13 +91,15 @@ export function FooterMark({ className }: { className?: string }) {
           style={{ transform: "translate3d(var(--tx), var(--ty), 0)" }}
         >
           <div
-            className={FOOTER_FILL_IMAGE ? "relative bg-cover bg-center" : "mark-mono relative"}
+            className={
+              tone === "white" ? "relative bg-white" : FOOTER_FILL_IMAGE ? "relative bg-cover bg-center" : "mark-mono relative"
+            }
             style={{
               width: `${OVERSCAN * 100}%`,
               marginLeft: `${((1 - OVERSCAN) / 2) * 100}%`,
               aspectRatio: "3 / 1",
               marginTop: `${(-TOP / 3) * OVERSCAN * 100}%`,
-              ...(FOOTER_FILL_IMAGE ? { backgroundImage: `url(${FOOTER_FILL_IMAGE})` } : {}),
+              ...(FOOTER_FILL_IMAGE && tone !== "white" ? { backgroundImage: `url(${FOOTER_FILL_IMAGE})` } : {}),
               WebkitMaskImage: `linear-gradient(#000, #000), url(${STENCIL})`,
               maskImage: `linear-gradient(#000, #000), url(${STENCIL})`,
               WebkitMaskComposite: "xor",

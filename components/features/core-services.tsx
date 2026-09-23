@@ -3,6 +3,7 @@
 import {
   AnimatePresence,
   MotionConfig,
+  animate,
   motion,
   useInView,
   useMotionValueEvent,
@@ -51,7 +52,7 @@ const SERVICES: Service[] = [
     key: "ai",
     title: "AI & Machine Learning",
     body: "Predictive analytics, process automation and decision support that learn from your own data and improve over time.",
-    href: "#intelligence",
+    href: "#capabilities",
     path: "services/applied-ai",
     chips: ["Forecasting", "Document AI", "Anomaly alerts"],
   },
@@ -84,27 +85,52 @@ export function CoreServices() {
     setActive(Math.min(SERVICES.length - 1, Math.max(0, Math.floor(v * SERVICES.length))));
   });
 
-  // Clicking a service scrolls to the middle of its step
+  // Clicking a service scrolls to the middle of its step. The scroll is driven
+  // here (not the browser's smooth scroll, which can stop short on long jumps),
+  // so it always lands exactly on the chosen service.
+  const scrollAnim = useRef<ReturnType<typeof animate> | null>(null);
   const goTo = (i: number) => {
     const el = ref.current;
     if (!el) return;
     const top = el.getBoundingClientRect().top + window.scrollY;
     const travel = el.offsetHeight - window.innerHeight;
-    window.scrollTo({ top: top + ((i + 0.5) / SERVICES.length) * travel, behavior: "smooth" });
+    const target = Math.round(top + ((i + 0.5) / SERVICES.length) * travel);
+    const from = window.scrollY;
+    scrollAnim.current?.stop();
+    setActive(i);
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      window.scrollTo({ top: target, behavior: "instant" });
+      return;
+    }
+    const distance = Math.abs(target - from);
+    // Any manual scroll or key press hands control straight back to the visitor
+    const cancel = () => {
+      scrollAnim.current?.stop();
+      window.removeEventListener("wheel", cancel);
+      window.removeEventListener("touchstart", cancel);
+      window.removeEventListener("keydown", cancel);
+    };
+    window.addEventListener("wheel", cancel, { passive: true });
+    window.addEventListener("touchstart", cancel, { passive: true });
+    window.addEventListener("keydown", cancel);
+    scrollAnim.current = animate(from, target, {
+      duration: Math.min(1.2, 0.5 + distance / 4000),
+      ease: [0.65, 0, 0.35, 1],
+      onUpdate: (v) => window.scrollTo({ top: v, behavior: "instant" }),
+      onComplete: cancel,
+    });
   };
 
   return (
     <MotionConfig reducedMotion="user">
       <section id="core-services" className="relative" aria-labelledby="core-services-title">
-        <Container className="pt-24 sm:pt-32">
-          <div className="grid gap-8 lg:grid-cols-12 lg:items-end">
-            <div className="lg:col-span-7">
-              <p className="kicker mb-6">What we do</p>
-              <h2 id="core-services-title" className="display display-md max-w-[14ch]">
-                Our <Grad>core services</Grad>
-              </h2>
-            </div>
-            <p className="lede lg:col-span-4 lg:col-start-9">
+        <Container className="pt-16 sm:pt-20">
+          <div className="max-w-3xl">
+            <p className="kicker mb-6">What we do</p>
+            <h2 id="core-services-title" className="display display-sm max-w-[18ch]">
+              Our <Grad>core services</Grad>
+            </h2>
+            <p className="lede mt-6 max-w-[56ch]">
               Four ways we help, delivered by one team: from the first workshop to go-live and the improvements after it.
             </p>
           </div>
@@ -112,7 +138,7 @@ export function CoreServices() {
 
         {/* Desktop: pinned service console */}
         <div ref={ref} className="relative hidden lg:block" style={{ height: `${SERVICES.length * 90 + 10}vh` }}>
-          <div className="sticky top-0 flex h-screen items-center overflow-hidden pt-20">
+          <div className="sticky top-16 flex overflow-hidden pb-32 pt-8">
             <div
               aria-hidden
               className="grid-faint pointer-events-none absolute inset-0 [mask-image:radial-gradient(55%_60%_at_70%_55%,black,transparent)]"
@@ -158,8 +184,6 @@ export function CoreServices() {
           ))}
           <StaticPipeline />
         </Container>
-
-        <div className="hidden h-20 lg:block" aria-hidden />
       </section>
     </MotionConfig>
   );

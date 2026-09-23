@@ -49,11 +49,11 @@ export function Decisions() {
       <div aria-hidden className="h-32 bg-linear-to-b/oklab from-paper to-night" />
 
       <Container className="pb-8 pt-10 sm:pt-16">
-        <div className="grid gap-8 lg:grid-cols-12 lg:items-end">
-          <h2 id="decisions-title" className="display display-md max-w-[15ch] lg:col-span-7">
+        <div className="max-w-3xl">
+          <h2 id="decisions-title" className="display display-md max-w-[15ch]">
             Turn complex operations into <Grad tone="dark">clear decisions.</Grad>
           </h2>
-          <p className="lede text-white/60 lg:col-span-4 lg:col-start-9">
+          <p className="lede mt-6 max-w-[56ch] text-white/60">
             The QWY Console sits on top of your ERP and apps. It is where the numbers meet, and where the next action starts.
           </p>
         </div>

@@ -72,26 +72,24 @@ const PIPELINE = [
 
 export function Developers() {
   return (
-    <section id="developers" data-nav="dark" className="relative overflow-hidden bg-night py-24 text-white sm:py-36" aria-labelledby="developers-title">
+    <section id="developers" data-nav="dark" className="relative overflow-hidden bg-night py-16 text-white sm:py-24" aria-labelledby="developers-title">
       <div aria-hidden className="grid-night pointer-events-none absolute inset-0 [mask-image:linear-gradient(to_bottom,black,transparent_70%)]" />
       <div
         aria-hidden
         className="pointer-events-none absolute -left-[10%] top-[20%] h-[60vh] w-[50vw] rounded-full bg-[radial-gradient(closest-side,rgba(115,87,232,0.3),transparent_70%)] blur-2xl"
       />
       <Container className="relative">
-        <div className="grid gap-8 lg:grid-cols-12 lg:items-end">
-          <div className="lg:col-span-7">
-            <p className="kicker mb-6 text-violet-soft">For developers</p>
-            <h2 id="developers-title" className="display display-md max-w-[15ch]">
-              <Grad tone="dark">Open by design</Grad>, down to the last endpoint.
-            </h2>
-          </div>
-          <p className="lede text-white/60 lg:col-span-4 lg:col-start-9">
+        <div className="max-w-3xl">
+          <p className="kicker mb-6 text-violet-soft">For developers</p>
+          <h2 id="developers-title" className="display display-md max-w-[15ch]">
+            <Grad tone="dark">Open by design</Grad>, down to the last endpoint.
+          </h2>
+          <p className="lede mt-6 max-w-[56ch] text-white/60">
             Documented integrations, clean data contracts and code you own. Your engineers can extend anything we build.
           </p>
         </div>
 
-        <div className="mt-16 grid gap-6 lg:grid-cols-12">
+        <div className="mt-14 grid gap-6 lg:grid-cols-12">
           <div className="min-w-0 lg:col-span-7">
             <CodePanel snippets={SNIPPETS} />
           </div>
@@ -133,10 +131,10 @@ export function Developers() {
           </div>
         </div>
 
-        <div className="mt-24">
-          <div className="grid gap-6 lg:grid-cols-12 lg:items-end">
-            <h3 className="display display-sm max-w-[18ch] lg:col-span-6">Dedicated teams that work as <Grad tone="dark">an extension of yours.</Grad></h3>
-            <p className="text-[1.0625rem] leading-relaxed text-white/55 lg:col-span-5 lg:col-start-8">
+        <div className="mt-20">
+          <div className="max-w-3xl">
+            <h3 className="display display-sm max-w-[18ch]">Dedicated teams that work as <Grad tone="dark">an extension of yours.</Grad></h3>
+            <p className="mt-6 max-w-[56ch] text-[1.0625rem] leading-relaxed text-white/55">
               Consistency, speed and accountability in every phase: continuous support, quick iterations and dependable
               execution, so your roadmap keeps moving.
             </p>

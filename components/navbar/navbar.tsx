@@ -15,6 +15,9 @@ const ease = [0.22, 1, 0.36, 1] as const;
 /** Section anchors (#solutions) live on the homepage; make them work from any page. */
 const to = (href: string) => (href.startsWith("#") ? `/${href}` : href);
 
+// Only reset once per page load, even if the navbar re-mounts on client navigation
+let reloadHandled = false;
+
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [dark, setDark] = useState(false);
@@ -33,6 +36,29 @@ export function Navbar() {
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  useEffect(() => {
+    // On refresh, always start from the top with the header in view, instead of
+    // the browser restoring the old scroll position or jumping to a leftover #hash.
+    if (reloadHandled) return;
+    reloadHandled = true;
+    const nav = performance.getEntriesByType("navigation")[0] as PerformanceNavigationTiming | undefined;
+    if (nav?.type !== "reload") return;
+    if ("scrollRestoration" in history) history.scrollRestoration = "manual";
+    if (window.location.hash) history.replaceState(null, "", window.location.pathname + window.location.search);
+    window.scrollTo({ top: 0, behavior: "instant" });
+  }, []);
+
+  // Logo: on the homepage, glide back to the top and clear any #section from the URL
+  const onLogoClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    setMobile(false);
+    setOpen(null);
+    if (window.location.pathname !== "/") return; // let the link navigate home
+    e.preventDefault();
+    if (window.location.hash) history.replaceState(null, "", "/");
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    window.scrollTo({ top: 0, behavior: reduce ? "instant" : "smooth" });
+  };
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -82,7 +108,7 @@ export function Navbar() {
           )}
         >
           <div className="mr-10 flex shrink-0 items-center gap-4">
-            <Link href="/" aria-label="QWY Software home" className="flex items-center">
+            <Link href="/" aria-label="QWY Software home" className="flex items-center" onClick={onLogoClick}>
               <Logo tone={scrolled && dark && !open ? "white" : "color"} height={scrolled ? 26 : 30} priority />
             </Link>
             <span

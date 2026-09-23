@@ -7,21 +7,19 @@ import { cn } from "@/lib/utils";
 
 export function Engagement() {
   return (
-    <section id="engage" className="bg-paper py-24 sm:py-36" aria-labelledby="engage-title">
+    <section id="engage" className="bg-paper py-16 sm:py-24" aria-labelledby="engage-title">
       <Container>
-        <div className="grid gap-8 lg:grid-cols-12 lg:items-end">
-          <div className="lg:col-span-6">
-            <p className="kicker mb-6">Pricing</p>
-            <h2 id="engage-title" className="display display-md max-w-[14ch]">
-              <Grad>Three ways</Grad> to work with us.
-            </h2>
-          </div>
-          <p className="lede lg:col-span-5 lg:col-start-8">
+        <div className="max-w-3xl">
+          <p className="kicker mb-6">Pricing</p>
+          <h2 id="engage-title" className="display display-md max-w-[14ch]">
+            <Grad>Three ways</Grad> to work with us.
+          </h2>
+          <p className="lede mt-6 max-w-[56ch]">
             Every engagement is priced to its scope after a free discovery session. No licence fees on code we write for you.
           </p>
         </div>
 
-        <ul className="mt-16 grid gap-4 lg:grid-cols-[1fr_1.15fr_1fr]">
+        <ul className="mt-14 grid gap-4 lg:grid-cols-[1fr_1.15fr_1fr]">
           {ENGAGEMENTS.map((e) => (
             <li
               key={e.name}

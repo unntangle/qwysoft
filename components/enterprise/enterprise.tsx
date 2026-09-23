@@ -12,7 +12,7 @@ const STATUS = [
 
 export function Enterprise() {
   return (
-    <section id="enterprise" className="bg-paper py-24 sm:py-36" aria-labelledby="enterprise-title">
+    <section id="enterprise" className="bg-paper py-16 sm:py-24" aria-labelledby="enterprise-title">
       <Container>
         <div className="grid gap-16 lg:grid-cols-12">
           <div className="lg:col-span-5">

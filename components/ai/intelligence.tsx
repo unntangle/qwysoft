@@ -28,7 +28,7 @@ export function Intelligence() {
   return (
     <section
       id="intelligence"
-      className="grain relative overflow-hidden bg-[#fdf3ec] py-24 sm:py-36"
+      className="grain relative overflow-hidden bg-[#fdf3ec] py-16 sm:py-24"
       aria-labelledby="intelligence-title"
     >
       <div aria-hidden className="pointer-events-none absolute inset-0 -z-10">

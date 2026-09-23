@@ -56,7 +56,7 @@ export function WhoWeAre() {
           {/* Story */}
           <div className="lg:col-span-5">
             <p className="kicker mb-6">Who we are</p>
-            <h2 id="who-title" className="display display-md">
+            <h2 id="who-title" className="display display-sm">
               Who we are
               <span className="block bg-[linear-gradient(95deg,#ff1f6b_0%,#c3158a_50%,#6a1fd0_100%)] bg-clip-text pb-[0.12em] text-transparent">
                 &amp; what we do

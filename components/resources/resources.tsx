@@ -7,10 +7,10 @@ import { RESOURCES } from "@/lib/constants";
 export function Resources() {
   const [lead, ...rest] = RESOURCES;
   return (
-    <section id="resources" className="py-24 sm:py-36" aria-labelledby="resources-title">
+    <section id="resources" className="py-16 sm:py-24" aria-labelledby="resources-title">
       <Container>
         <div className="flex flex-wrap items-end justify-between gap-6">
-          <h2 id="resources-title" className="display display-md">
+          <h2 id="resources-title" className="display display-sm">
             <Grad>Insights</Grad>
           </h2>
           <a href="#resources" className="group flex items-center gap-1.5 text-[15px] font-medium text-plum">

@@ -6,16 +6,18 @@ import { ACCELERATORS } from "@/lib/constants";
 
 export function Accelerators() {
   return (
-    <section id="accelerators" className="pb-24 sm:pb-36" aria-labelledby="accelerators-title">
+    <section id="accelerators" className="pb-16 sm:pb-24" aria-labelledby="accelerators-title">
       <Container>
-        <div className="grid gap-8 border-t border-line pt-16 lg:grid-cols-12">
-          <h2 id="accelerators-title" className="display display-sm max-w-[18ch] lg:col-span-6">
-            Pre-built platforms, so you start at <Grad>eighty percent.</Grad>
-          </h2>
-          <p className="lede lg:col-span-5 lg:col-start-8">
-            Proven starting points for common operations. Less implementation time, with full room to customise the part that
-            makes your business yours.
-          </p>
+        <div className="border-t border-line pt-16">
+          <div className="max-w-3xl">
+            <h2 id="accelerators-title" className="display display-sm max-w-[18ch]">
+              Pre-built platforms, so you start at <Grad>eighty percent.</Grad>
+            </h2>
+            <p className="lede mt-6 max-w-[56ch]">
+              Proven starting points for common operations. Less implementation time, with full room to customise the part
+              that makes your business yours.
+            </p>
+          </div>
         </div>
 
         <ul className="mt-14 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">

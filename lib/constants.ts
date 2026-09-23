@@ -135,7 +135,7 @@ export const HERO = {
     },
   ] as HeroSlide[],
   primary: { label: "Get a free consultation", href: "#contact" },
-  secondary: { label: "See the platform", href: "#decisions" },
+  secondary: { label: "See the platform", href: "#platform" },
 };
 
 /* ---------------- Trust ---------------- */
@@ -394,8 +394,8 @@ export const FOOTER_COLUMNS: FooterGroup[][] = [
       heading: "Services",
       links: [
         { label: "Custom Software Solutions", href: "#capabilities" },
-        { label: "Applied AI", href: "#intelligence" },
-        { label: "Dedicated Technology Teams", href: "#developers" },
+        { label: "Applied AI", href: "#capabilities" },
+        { label: "Dedicated Technology Teams", href: "#core-services" },
       ],
     },
   ],

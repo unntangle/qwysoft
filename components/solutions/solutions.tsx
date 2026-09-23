@@ -15,22 +15,20 @@ export function Solutions() {
   const current = SOLUTIONS[active];
 
   return (
-    <section id="solutions" className="relative py-24 sm:py-36" aria-labelledby="solutions-title">
+    <section id="solutions" className="relative py-16 sm:py-24" aria-labelledby="solutions-title">
       <Container>
-        <div className="grid gap-8 lg:grid-cols-12 lg:items-end">
-          <div className="lg:col-span-7">
-            <p className="kicker mb-6">Odoo ERP services</p>
-            <h2 id="solutions-title" className="display display-md max-w-[16ch]">
-              Your whole business, running on <Grad>one system.</Grad>
-            </h2>
-          </div>
-          <p className="lede lg:col-span-4 lg:col-start-9">
+        <div className="max-w-3xl">
+          <p className="kicker mb-6">Odoo ERP services</p>
+          <h2 id="solutions-title" className="display display-sm max-w-[18ch]">
+            Your whole business, running on <Grad>one system.</Grad>
+          </h2>
+          <p className="lede mt-6 max-w-[56ch]">
             From sales and finance to HR and inventory, we structure and customise Odoo to match how you work: better
             visibility, smoother coordination, and more control.
           </p>
         </div>
 
-        <div className="mt-16 grid gap-10 lg:grid-cols-12">
+        <div className="mt-14 grid gap-10 lg:grid-cols-12">
           <ul className="lg:col-span-6" role="tablist" aria-label="ERP solutions">
             {SOLUTIONS.map((s, i) => (
               <li key={s.key} className="border-t border-line last:border-b">

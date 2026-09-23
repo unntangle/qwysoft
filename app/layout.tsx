@@ -70,6 +70,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en-IN" className={`${googleSans.variable} ${googleSansCode.variable}`}>
       <body>
+        {/* On refresh, open at the top (header in view): stop the browser restoring the
+            old scroll position or jumping to a leftover #section, before first paint. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `try{var n=performance.getEntriesByType("navigation")[0];if(n&&n.type==="reload"){history.scrollRestoration="manual";if(location.hash){history.replaceState(null,"",location.pathname+location.search)}window.scrollTo(0,0)}}catch(e){}`,
+          }}
+        />
         <a
           href="#main"
           className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[60] focus:rounded-lg focus:bg-ink focus:px-4 focus:py-2 focus:text-white"

@@ -42,21 +42,16 @@ function Panel({ className, title, meta, children }: { className?: string; title
 export function DataSection() {
   const funnelMax = FUNNEL[0].value;
   return (
-    <section id="data" className="py-24 sm:py-36" aria-labelledby="data-title">
+    <section id="data" className="py-16 sm:py-24" aria-labelledby="data-title">
       <Container>
-        <div className="grid gap-8 lg:grid-cols-12 lg:items-end">
-          <SectionIntro
-            className="lg:col-span-7"
-            kicker="Real-time insights"
-            title={<span id="data-title">Every number, with <Grad>the reason</Grad> next to it.</span>}
-          />
-          <p className="lede lg:col-span-4 lg:col-start-9">
-            Charts that end in a conclusion. Each view carries the insight a manager would otherwise spend an afternoon
-            finding.
-          </p>
-        </div>
+        <SectionIntro
+          className="max-w-3xl"
+          kicker="Real-time insights"
+          title={<span id="data-title">Every number, with <Grad>the reason</Grad> next to it.</span>}
+          body="Charts that end in a conclusion. Each view carries the insight a manager would otherwise spend an afternoon finding."
+        />
 
-        <Reveal className="mt-16 grid gap-4 lg:grid-cols-12">
+        <Reveal className="mt-14 grid gap-4 lg:grid-cols-12">
           <Panel className="lg:col-span-8" title="Revenue and AI forecast" meta="₹ lakhs, FY 2026–27">
             <div className="mb-4 flex flex-wrap gap-8">
               <div>

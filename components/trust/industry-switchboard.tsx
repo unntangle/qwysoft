@@ -6,7 +6,11 @@ import {
   useAnimationFrame,
   useInView,
   useMotionValue,
+  useMotionValueEvent,
   useReducedMotion,
+  useScroll,
+  useSpring,
+  useTransform,
 } from "framer-motion";
 import {
   Briefcase,
@@ -54,20 +58,25 @@ const REVEAL_STEP = 0.45; // s between each module wiring in, one by one
 const ITEM_H = 56; // px per dial row
 const DIAL_H = 392; // visible dial window (7 rows)
 
-// Blueprint geometry (SVG units)
+// Blueprint geometry (SVG units): a circuit board with the QWY + Odoo core
+// as the processor and each module wired to it with right-angled traces.
 const W = 560;
-const H = 380;
-const CX = W / 2;
-const CY = H / 2;
-const RX = 200;
-const RY = 135;
-
-function nodePositions(n: number, offset: number) {
-  return Array.from({ length: n }, (_, i) => {
-    const a = -Math.PI / 2 + offset + (i / n) * Math.PI * 2;
-    return { x: CX + Math.cos(a) * RX, y: CY + Math.sin(a) * RY };
-  });
-}
+const H = 360;
+const CHIP = { x: 205, y: 132, w: 150, h: 96 };
+const pct = (v: number, of: number) => `${(v / of) * 100}%`;
+// Module positions, clockwise from top-left, and the trace from each into the core
+const SLOTS = [
+  { x: 95, y: 70, d: "M150 70 H180 V150 H205" },
+  { x: 280, y: 40, d: "M280 58 V132" },
+  { x: 465, y: 70, d: "M410 70 H380 V150 H355" },
+  { x: 465, y: 290, d: "M410 290 H380 V210 H355" },
+  { x: 95, y: 290, d: "M150 290 H180 V210 H205" },
+];
+const VIAS = [
+  [180, 70], [180, 150], [380, 70], [380, 150], [380, 290], [380, 210], [180, 290], [180, 210],
+];
+const DB_TRACE = "M280 228 V296";
+const PINS = Array.from({ length: 7 }, (_, k) => CHIP.y + 6 + k * 12);
 
 export function IndustrySwitchboard() {
   const reduce = useReducedMotion();
@@ -76,14 +85,41 @@ export function IndustrySwitchboard() {
   const [active, setActive] = useState(0);
   const [paused, setPaused] = useState(false);
   const industry = INDUSTRIES[active];
-  // Rotate the layout a little per industry so each blueprint feels different
-  const nodes = nodePositions(industry.modules.length, (active % 3) * 0.35);
 
   // Progress (0 → 1) of the current industry. Drives both the moving
   // underline and the auto-advance, so hovering freezes the line in place
   // and it resumes from the same spot instead of restarting.
   const progress = useMotionValue(0);
-  const running = !reduce && !paused && inView;
+
+  // Scroll-in for the blueprint card: it stays hidden until the section heading
+  // has scrolled up under the site header, then starts tilted back in 3D,
+  // smaller and lower, and "boots up" flat, with a scan line sweeping down it
+  // and the grid drifting underneath.
+  const cardRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress: cardScroll } = useScroll({ target: cardRef, offset: ["start 62%", "start 12%"] });
+  const cardP = useSpring(cardScroll, { stiffness: 110, damping: 22, mass: 0.6 });
+  const cardRotateX = useTransform(cardP, [0, 1], [24, 0]);
+  const cardScale = useTransform(cardP, [0, 1], [0.86, 1]);
+  const cardY = useTransform(cardP, [0, 1], [70, 0]);
+  const cardOpacity = useTransform(cardP, [0, 0.35], [0, 1]);
+  const gridY = useTransform(cardP, [0, 1], [-40, 0]);
+  const scanTop = useTransform(cardP, (v) => `${v * 100}%`);
+  const scanOpacity = useTransform(cardP, [0, 0.08, 0.85, 1], [0, 1, 1, 0]);
+
+  // The dial holds on 01 until the visitor has actually scrolled down to this
+  // section (the blueprint card has booted up). Scrolling back above it resets
+  // to 01 so the story starts from the beginning next time.
+  const [armed, setArmed] = useState(false);
+  useMotionValueEvent(cardScroll, "change", (v) => {
+    if (v >= 0.95 && !armed) setArmed(true);
+    if (v <= 0.02 && armed) {
+      setArmed(false);
+      setActive(0);
+      progress.set(0);
+    }
+  });
+
+  const running = !reduce && !paused && inView && armed;
 
   useAnimationFrame((_, delta) => {
     if (!running) return;
@@ -220,9 +256,30 @@ export function IndustrySwitchboard() {
       </div>
 
       {/* Blueprint */}
-      <div className="relative mx-auto w-full max-w-[560px] lg:col-span-6" role="tabpanel" aria-live="polite">
-        <div className="relative overflow-hidden rounded-[var(--radius-panel)] border border-line bg-white shadow-[var(--shadow-panel)]">
-          <div aria-hidden className="grid-faint absolute inset-0 opacity-80" />
+      <div
+        ref={cardRef}
+        className="relative mx-auto w-full max-w-[560px] [perspective:1400px] lg:col-span-6"
+        role="tabpanel"
+        aria-live="polite"
+      >
+        <motion.div
+          className="relative overflow-hidden rounded-[var(--radius-panel)] border border-line bg-white shadow-[var(--shadow-panel)]"
+          style={
+            reduce
+              ? undefined
+              : { rotateX: cardRotateX, scale: cardScale, y: cardY, opacity: cardOpacity, transformOrigin: "50% 100%" }
+          }
+        >
+          <motion.div aria-hidden className="grid-faint absolute -inset-y-10 inset-x-0 opacity-80" style={reduce ? undefined : { y: gridY }} />
+          {!reduce && (
+            <motion.div
+              aria-hidden
+              className="pointer-events-none absolute inset-x-0 z-20 h-16 -translate-y-1/2 bg-[linear-gradient(180deg,transparent,rgba(143,92,255,0.10)_45%,rgba(255,31,107,0.14)_50%,rgba(143,92,255,0.10)_55%,transparent)]"
+              style={{ top: scanTop, opacity: scanOpacity }}
+            >
+              <span className="absolute inset-x-0 top-1/2 h-px bg-[linear-gradient(90deg,transparent,#ff1f6b_30%,#8f5cff_70%,transparent)] opacity-60" />
+            </motion.div>
+          )}
           <div
             aria-hidden
             className="absolute inset-0 bg-[radial-gradient(45%_45%_at_50%_50%,rgba(220,212,248,0.55),transparent_70%),radial-gradient(35%_35%_at_85%_90%,rgba(255,200,165,0.45),transparent_70%)]"
@@ -245,86 +302,110 @@ export function IndustrySwitchboard() {
           </div>
 
           <div className="relative" style={{ aspectRatio: `${W} / ${H}` }}>
-            {/* Orbit, connections and data pulses */}
+            {/* Board: idle traces, live traces with signals, vias and chip pins */}
             <svg viewBox={`0 0 ${W} ${H}`} className="absolute inset-0 h-full w-full" aria-hidden>
               <defs>
-                <linearGradient id="wire" x1="0" x2="1">
+                <linearGradient id="trace" x1="0" x2="1" y1="0" y2="1">
                   <stop offset="0" stopColor="#ff1f6b" />
                   <stop offset="1" stopColor="#8f5cff" />
                 </linearGradient>
               </defs>
-              <g className="origin-center animate-[spin_60s_linear_infinite]" style={{ transformOrigin: `${CX}px ${CY}px` }}>
-                <ellipse cx={CX} cy={CY} rx={RX} ry={RY} fill="none" stroke="#e7e2ed" strokeDasharray="2 7" />
-                <ellipse cx={CX} cy={CY} rx={RX * 0.58} ry={RY * 0.58} fill="none" stroke="#efeaf4" strokeDasharray="1 6" />
-              </g>
+
+              {SLOTS.map((s) => (
+                <path key={s.d} d={s.d} fill="none" stroke="#e9e4ef" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+              ))}
+
               <AnimatePresence>
-                {nodes.map((p, i) => {
-                  const d = `M ${CX} ${CY} Q ${(CX + p.x) / 2 + (i % 2 ? 24 : -24)} ${(CY + p.y) / 2} ${p.x} ${p.y}`;
-                  return (
-                    <g key={`${industry.name}-${i}`}>
-                      <motion.path
-                        d={d}
+                {SLOTS.map((s, i) => (
+                  <g key={`${industry.name}-${i}`}>
+                    <motion.path
+                      d={s.d}
+                      fill="none"
+                      stroke="url(#trace)"
+                      strokeWidth={2}
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      initial={reduce ? false : { pathLength: 0, opacity: 0 }}
+                      animate={{ pathLength: 1, opacity: 1 }}
+                      exit={{ opacity: 0, transition: { duration: 0.2 } }}
+                      transition={{ duration: 0.45, delay: 0.1 + i * REVEAL_STEP, ease: [0.22, 1, 0.36, 1] }}
+                    />
+                    {!reduce && (
+                      <path
+                        d={s.d}
+                        pathLength={1}
                         fill="none"
-                        stroke="url(#wire)"
-                        strokeWidth={1.5}
-                        strokeOpacity={0.55}
-                        initial={reduce ? false : { pathLength: 0, opacity: 0 }}
-                        animate={{ pathLength: 1, opacity: 1 }}
-                        exit={{ opacity: 0, transition: { duration: 0.2 } }}
-                        transition={{ duration: 0.45, delay: 0.1 + i * REVEAL_STEP, ease: [0.22, 1, 0.36, 1] }}
+                        stroke="#ff1f6b"
+                        strokeWidth={4}
+                        strokeLinecap="round"
+                        className="trace-signal"
+                        style={{ animationDelay: `${0.6 + i * REVEAL_STEP}s` }}
                       />
-                      {!reduce && (
-                        <motion.circle
-                          r={3}
-                          fill="#ff1f6b"
-                          initial={{ opacity: 0 }}
-                          animate={{ opacity: [0, 1, 1, 0] }}
-                          exit={{ opacity: 0 }}
-                          transition={{ duration: 1.8, delay: 0.6 + i * REVEAL_STEP, repeat: Infinity, repeatDelay: 0.6 }}
-                        >
-                          <animateMotion dur="1.8s" begin={`${0.6 + i * REVEAL_STEP}s`} repeatCount="indefinite" path={d} />
-                        </motion.circle>
-                      )}
-                    </g>
-                  );
-                })}
+                    )}
+                  </g>
+                ))}
               </AnimatePresence>
+
+              {/* Core → database */}
+              <path d={DB_TRACE} fill="none" stroke="#2f9e7a" strokeOpacity={0.55} strokeWidth={2} strokeDasharray="4 5" className="animate-flow" />
+
+              {VIAS.map(([x, y]) => (
+                <circle key={`${x}-${y}`} cx={x} cy={y} r={3.5} fill="#fff" stroke="#d9d2e3" strokeWidth={1.5} />
+              ))}
+
+              {PINS.map((py) => (
+                <g key={py} fill="#d9d2e3">
+                  <rect x={CHIP.x - 7} y={py - 1.5} width={7} height={3} rx={1} />
+                  <rect x={CHIP.x + CHIP.w} y={py - 1.5} width={7} height={3} rx={1} />
+                </g>
+              ))}
             </svg>
 
-            {/* Core */}
+            {/* Core processor */}
             <div
-              className="absolute -translate-x-1/2 -translate-y-1/2"
-              style={{ left: `${(CX / W) * 100}%`, top: `${(CY / H) * 100}%` }}
+              className="absolute grid place-items-center rounded-2xl bg-[linear-gradient(135deg,#ff1f6b,#c3158a_50%,#5a0aa6)] text-white shadow-[0_20px_40px_-16px_rgba(195,21,138,0.7)]"
+              style={{ left: pct(CHIP.x, W), top: pct(CHIP.y, H), width: pct(CHIP.w, W), height: pct(CHIP.h, H) }}
             >
+              <span aria-hidden className="absolute inset-[6px] rounded-xl border border-white/20" />
+              <span aria-hidden className="absolute left-3 top-3 size-1.5 rounded-full bg-white/70" />
               {!reduce && (
-                <>
-                  <span className="absolute inset-0 -m-3 animate-ping rounded-full bg-[#ff1f6b]/15 [animation-duration:2.6s]" aria-hidden />
-                  <span className="absolute inset-0 -m-6 animate-ping rounded-full bg-[#8f5cff]/10 [animation-delay:1.3s] [animation-duration:2.6s]" aria-hidden />
-                </>
+                <span aria-hidden className="absolute -inset-1.5 animate-pulse rounded-[20px] ring-2 ring-[#ff1f6b]/25" />
               )}
-              <div className="relative grid size-[88px] place-items-center rounded-full bg-[linear-gradient(135deg,#ff1f6b,#c3158a_50%,#5a0aa6)] text-center text-white shadow-[0_20px_40px_-16px_rgba(195,21,138,0.7)] sm:size-[104px]">
-                <span className="flex flex-col items-center text-[13px] font-semibold leading-tight">
-                  QWY
-                  <span className="text-[11px] font-normal leading-none text-white/80">+</span>
-                  <span className="text-[11px] font-normal text-white/80">Odoo</span>
-                </span>
-              </div>
+              <span className="relative text-center leading-tight">
+                <span className="block text-[15px] font-semibold tracking-[0.04em]">QWY</span>
+                <span className="block text-[11px] text-white/75">+ Odoo core</span>
+              </span>
             </div>
 
-            {/* Module nodes */}
+            {/* One database */}
+            <div
+              className="absolute -translate-x-1/2 -translate-y-1/2"
+              style={{ left: pct(280, W), top: pct(310, H) }}
+            >
+              <span className="flex items-center gap-1.5 whitespace-nowrap rounded-full border border-line bg-white/95 px-2.5 py-1 text-[11px] text-ink-soft">
+                <span className="live-dot size-1.5 rounded-full bg-mint" />1 database · live
+              </span>
+            </div>
+
+            {/* Module components */}
             <AnimatePresence>
-              {nodes.map((p, i) => (
+              {SLOTS.map((s, i) => (
                 <motion.div
                   key={`${industry.name}-${industry.modules[i]}`}
                   className="absolute -translate-x-1/2 -translate-y-1/2"
-                  style={{ left: `${(p.x / W) * 100}%`, top: `${(p.y / H) * 100}%` }}
-                  initial={reduce ? false : { opacity: 0, scale: 0.6, x: `${((CX - p.x) / W) * 100}%`, y: `${((CY - p.y) / H) * 100}%` }}
-                  animate={{ opacity: 1, scale: 1, x: 0, y: 0 }}
-                  exit={{ opacity: 0, scale: 0.8, transition: { duration: 0.2 } }}
-                  transition={{ type: "spring", stiffness: 180, damping: 20, delay: 0.4 + i * REVEAL_STEP }}
+                  style={{ left: pct(s.x, W), top: pct(s.y, H) }}
+                  initial={reduce ? false : { opacity: 0, scale: 0.8, y: 6 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.9, transition: { duration: 0.2 } }}
+                  transition={{ type: "spring", stiffness: 220, damping: 22, delay: 0.05 + i * REVEAL_STEP }}
                 >
-                  <span className="flex items-center gap-1.5 whitespace-nowrap rounded-full border border-line bg-white/95 px-3 py-1.5 text-[12px] font-medium text-ink shadow-[0_8px_20px_-10px_rgba(45,22,90,0.35)] backdrop-blur sm:text-[13px]">
-                    <span className="size-1.5 rounded-full bg-[linear-gradient(135deg,#ff1f6b,#8f5cff)]" />
+                  <span className="flex items-center gap-2 whitespace-nowrap rounded-lg border border-line bg-white px-2.5 py-1.5 text-[12px] font-medium text-ink shadow-[0_8px_20px_-12px_rgba(45,22,90,0.35)] sm:text-[12.5px]">
+                    <motion.span
+                      className="size-1.5 rounded-full"
+                      initial={reduce ? false : { backgroundColor: "#d9d2e3" }}
+                      animate={{ backgroundColor: "#2f9e7a" }}
+                      transition={{ delay: 0.55 + i * REVEAL_STEP, duration: 0.2 }}
+                    />
                     {industry.modules[i]}
                   </span>
                 </motion.div>
@@ -348,7 +429,7 @@ export function IndustrySwitchboard() {
               </motion.span>
             </AnimatePresence>
           </div>
-        </div>
+        </motion.div>
       </div>
     </div>
   );

@@ -47,22 +47,20 @@ const BENEFITS = [
 
 export function KeyBenefits() {
   return (
-    <section id="benefits" className="py-24 sm:py-32" aria-labelledby="benefits-title">
+    <section id="benefits" className="py-16 sm:py-24" aria-labelledby="benefits-title">
       <Container>
-        <div className="grid gap-8 lg:grid-cols-12 lg:items-end">
-          <div className="lg:col-span-6">
-            <p className="kicker mb-6">Why QWY</p>
-            <h2 id="benefits-title" className="display display-md max-w-[14ch]">
-              Key <Grad>features and benefits</Grad>
-            </h2>
-          </div>
-          <p className="lede lg:col-span-5 lg:col-start-8">
+        <div className="max-w-3xl">
+          <p className="kicker mb-6">Why QWY</p>
+          <h2 id="benefits-title" className="display display-sm max-w-[18ch]">
+            Key <Grad>features and benefits</Grad>
+          </h2>
+          <p className="lede mt-6 max-w-[56ch]">
             At QWY Software, we take pride in delivering top-notch services tailored to the unique needs of your business.
             Here&rsquo;s why businesses choose us.
           </p>
         </div>
 
-        <ul className="mt-16 grid gap-x-10 gap-y-12 sm:grid-cols-2 lg:grid-cols-4">
+        <ul className="mt-14 grid gap-x-10 gap-y-12 sm:grid-cols-2 lg:grid-cols-4">
           {BENEFITS.map(({ icon: Icon, title, body }) => (
             <li key={title} className="border-t border-ink/12 pt-6">
               <span className="grid size-10 place-items-center rounded-xl bg-[linear-gradient(135deg,rgba(255,31,107,0.12),rgba(90,10,166,0.14))] text-plum">

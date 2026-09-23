@@ -23,7 +23,7 @@ export function SectionIntro({
   return (
     <div className={cn(align === "center" && "mx-auto text-center", "max-w-3xl", className)}>
       {kicker && <p className={cn("kicker mb-5", tone === "dark" && "text-violet-soft")}>{kicker}</p>}
-      <Tag className={cn("display display-md", tone === "dark" ? "text-white" : "text-ink", titleClassName)}>{title}</Tag>
+      <Tag className={cn("display display-sm", tone === "dark" ? "text-white" : "text-ink", titleClassName)}>{title}</Tag>
       {body && (
         <p className={cn("lede mt-6 max-w-[58ch]", align === "center" && "mx-auto", tone === "dark" && "text-white/65")}>{body}</p>
       )}

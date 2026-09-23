@@ -28,11 +28,12 @@ const LAYERS = [
 
 export function PlatformIntro() {
   // Scroll-linked "fall", in sequence: nothing moves until the Think card has
-  // scrolled up into view, then Extend drops out from behind it, and only after
-  // Extend has landed does Run drop. The spring adds a small settle bounce.
+  // scrolled right up under the site header, then Extend drops out from behind
+  // it, and only after Extend has landed does Run drop. The spring adds a small
+  // settle bounce.
   const stackRef = useRef<HTMLDivElement>(null);
   const reduce = useReducedMotion();
-  const { scrollYProgress } = useScroll({ target: stackRef, offset: ["start 45%", "start 0%"] });
+  const { scrollYProgress } = useScroll({ target: stackRef, offset: ["start 18%", "start -45%"] });
   const progress = useSpring(scrollYProgress, { stiffness: 140, damping: 18, mass: 0.7 });
   // Extend: first half of the scroll
   const yExtend = useTransform(progress, [0, 0.45], [-190, 0]);
@@ -50,12 +51,12 @@ export function PlatformIntro() {
         : { y: yRun, rotate: rotRun, opacity: fadeRun };
 
   return (
-    <section id="platform" className="relative overflow-hidden pb-24 pt-12 sm:pb-36 sm:pt-16" aria-labelledby="platform-title">
+    <section id="platform" className="relative overflow-hidden pb-16 pt-12 sm:pb-20 sm:pt-16" aria-labelledby="platform-title">
       <Container>
         <div className="grid items-center gap-16 lg:grid-cols-12 lg:gap-10">
           <div className="lg:col-span-5 lg:col-start-8 lg:row-start-1">
             <p className="kicker mb-6">How it fits together</p>
-            <h2 id="platform-title" className="display display-md">
+            <h2 id="platform-title" className="display display-sm">
               One system for how your business <Grad>actually works.</Grad>
             </h2>
             <div className="mt-8 space-y-5 text-[1.0625rem] leading-relaxed text-ink-soft">
