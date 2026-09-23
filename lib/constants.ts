@@ -37,6 +37,8 @@ export type NavLink = { label: string; href: string; description?: string };
 export type NavGroup = {
   label: string;
   href?: string;
+  /** Short line under the big title in the dropdown */
+  intro?: string;
   columns?: { heading: string; links: NavLink[] }[];
   feature?: { title: string; body: string; href: string; cta: string; image?: { src: string; alt: string; width: number; height: number } };
 };
@@ -48,6 +50,7 @@ export const NAV: NavGroup[] = [
   { label: "About", href: "/about" },
   {
     label: "Services",
+    intro: "Odoo ERP and custom software, delivered end to end by one team.",
     columns: [
       {
         heading: "Odoo ERP",
@@ -78,6 +81,7 @@ export const NAV: NavGroup[] = [
   },
   {
     label: "Products",
+    intro: "Ready-made platforms that get you live in weeks, not months.",
     columns: [
       {
         heading: "Our products",

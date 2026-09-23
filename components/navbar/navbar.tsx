@@ -16,10 +16,13 @@ import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Logo } from "@/components/ui/logo";
 import { Magnetic } from "@/components/ui/magnetic";
-import { NAV, type NavGroup } from "@/lib/constants";
+import { NAV, RESOURCES, type NavGroup } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 
 const ease = [0.22, 1, 0.36, 1] as const;
+
+// Newest blog post, featured in the dropdowns
+const LATEST = RESOURCES[0];
 
 /** Section anchors (#solutions) live on the homepage; make them work from any page. */
 const to = (href: string) => (href.startsWith("#") ? `/${href}` : href);
@@ -309,10 +312,15 @@ export function Navbar() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -8 }}
               transition={{ duration: 0.3, ease }}
-              className="absolute inset-x-0 top-full hidden px-12 pt-2 lg:block"
-              onMouseEnter={() => openMenu(active.label)}
+              // The full-width layer ignores the pointer, so only the visible card keeps the menu open;
+              // moving off the card anywhere (sides, below, into the page) closes it
+              className="pointer-events-none absolute inset-x-0 top-full hidden px-12 pt-2 lg:block"
             >
-              <div className="mx-auto max-w-[1080px] overflow-hidden rounded-[28px] border border-line/80 bg-ivory/[0.97] shadow-[0_40px_80px_-30px_rgba(23,19,31,0.35),0_12px_24px_-12px_rgba(23,19,31,0.12)] backdrop-blur-xl">
+              <div
+                className="pointer-events-auto mx-auto max-w-[1080px] overflow-hidden rounded-[28px] border border-line/80 bg-ivory/[0.97] shadow-[0_40px_80px_-30px_rgba(23,19,31,0.35),0_12px_24px_-12px_rgba(23,19,31,0.12)] backdrop-blur-xl"
+                onMouseEnter={() => openMenu(active.label)}
+                onMouseLeave={scheduleClose}
+              >
                 <MegaPanel group={active} onNavigate={() => setOpen(null)} />
               </div>
             </motion.div>
@@ -339,6 +347,14 @@ export function Navbar() {
 
 /* ---------- Creative navbar pieces ---------- */
 
+// Arrow shape used as a mask, so the arrow can be filled with the brand gradient
+const ARROW_SVG =
+  "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12h14'/%3E%3Cpath d='m12 5 7 7-7 7'/%3E%3C/svg%3E";
+const ARROW_MASK: React.CSSProperties = {
+  WebkitMask: `url("${ARROW_SVG}") center / contain no-repeat`,
+  mask: `url("${ARROW_SVG}") center / contain no-repeat`,
+};
+
 /** Menu label that rolls up letter by letter on hover, revealing a brand-gradient copy (styles: .roll* in globals.css) */
 function RollText({ text }: { text: string }) {
   const chars = Array.from(text);
@@ -358,74 +374,144 @@ function RollText({ text }: { text: string }) {
   );
 }
 
+/* Dropdown panel in three columns:
+   1. Featured insight: the newest blog, filling the whole column on a tinted panel
+   2. The menu itself: title, intro and link rows (first link highlighted)
+   3. The feature card (Odoo Silver Partner / Our products) */
 function MegaPanel({ group, onNavigate }: { group: NavGroup; onNavigate: () => void }) {
+  const f = group.feature;
   return (
     <motion.div
       key={group.label}
       initial={{ opacity: 0, y: -6 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.35, ease, delay: 0.05 }}
-      className="grid grid-cols-12 gap-8 px-10 pb-10 pt-9"
+      className="grid grid-cols-12 overflow-hidden rounded-[inherit]"
     >
-      <p className="display col-span-3 text-[1.7rem] leading-[1.1] text-ink/90">{group.label}</p>
-      <div className={cn("grid gap-10", group.feature ? "col-span-6" : "col-span-9", group.columns!.length > 1 && "grid-cols-2")}>
-        {group.columns!.map((col, ci) => (
-          <div key={col.heading}>
-            <p className="mb-4 text-[13px] text-mute">{col.heading}</p>
-            <ul className="space-y-1">
-              {col.links.map((l, li) => (
-                // Links cascade in one after another when the panel opens
-                <motion.li
-                  key={l.label}
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.4, ease, delay: 0.08 + (ci * 5 + li) * 0.04 }}
-                >
-                  <Link
-                    href={to(l.href)}
-                    onClick={onNavigate}
-                    className="group -mx-3 block rounded-xl px-3 py-2.5 transition-colors hover:bg-white"
-                  >
-                    <span className="flex items-center gap-1.5 text-[15px] font-medium text-ink">
-                      {l.label}
-                      <ArrowRight className="size-3.5 -translate-x-1 opacity-0 transition-all group-hover:translate-x-0 group-hover:opacity-100" />
-                    </span>
-                  </Link>
-                </motion.li>
-              ))}
-            </ul>
-          </div>
-        ))}
-      </div>
-      {group.feature && (
-        <Link
-          href={to(group.feature.href)}
-          onClick={onNavigate}
-          className="group relative col-span-3 flex flex-col overflow-hidden rounded-2xl bg-indigo p-6 text-white"
+      {/* 1. Featured insight, filling the column */}
+      <div className="col-span-3 flex flex-col bg-[radial-gradient(120%_70%_at_0%_0%,rgba(124,196,240,0.2),transparent_60%),linear-gradient(165deg,#0b2542_0%,#11375d_55%,#174b78_100%)] px-7 pb-8 pt-7 text-white">
+        <p className="display text-[1.35rem] leading-tight text-white">Featured insight</p>
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.45, ease, delay: 0.1 }}
+          className="mt-5 flex flex-1 flex-col"
         >
-          <div className="absolute -right-10 -top-16 size-48 rounded-full bg-violet/50 blur-3xl" aria-hidden />
-          <div className="absolute -bottom-16 -left-10 size-40 rounded-full bg-saffron/30 blur-3xl" aria-hidden />
-          <p className="relative text-[15px] font-medium">{group.feature.title}</p>
-          <p className="relative mt-2 text-[13.5px] leading-relaxed text-white/65">{group.feature.body}</p>
-          <p className="relative mt-6 flex items-center gap-1.5 text-[13.5px] font-medium">
-            {group.feature.cta}
-            <ArrowRight className="size-3.5 transition-transform group-hover:translate-x-1" />
-          </p>
-          {group.feature.image && (
-            <div className="relative mt-auto pt-7">
-              <span className="block w-fit rounded-2xl bg-white p-3 shadow-[0_12px_30px_-12px_rgba(0,0,0,0.5)] transition-transform duration-300 group-hover:-translate-y-0.5">
-                <Image
-                  src={group.feature.image.src}
-                  alt={group.feature.image.alt}
-                  width={group.feature.image.width}
-                  height={group.feature.image.height}
-                  sizes="120px"
-                  className="h-auto w-[96px]"
-                />
+          <Link href={to(LATEST.href ?? "#resources")} onClick={onNavigate} className="group/ins flex flex-1 flex-col">
+            <span className="relative block aspect-[16/9] overflow-hidden rounded-xl bg-white shadow-[0_20px_40px_-20px_rgba(0,0,0,0.55)] ring-1 ring-white/10">
+              <Image
+                src={LATEST.image}
+                alt={LATEST.title}
+                fill
+                sizes="380px"
+                className="object-cover transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover/ins:scale-[1.04]"
+              />
+            </span>
+            <span className="mt-4 block text-[14.5px] font-medium leading-snug text-white">{LATEST.title}</span>
+            <span className="mt-1 block text-[12.5px] text-white/55">{LATEST.read}</span>
+            <span className="mt-auto inline-flex items-center gap-1.5 pt-5 text-[14px] font-medium text-[#a9d8f7]">
+              <span className="underline decoration-[#a9d8f7]/45 underline-offset-4 transition-colors group-hover/ins:decoration-[#a9d8f7]">
+                Read full blog
               </span>
+              <ArrowRight className="size-3.5 transition-transform group-hover/ins:translate-x-1" aria-hidden />
+            </span>
+          </Link>
+        </motion.div>
+      </div>
+
+      {/* 2. The menu: title, intro and links */}
+      <div className={cn("flex flex-col px-9 pb-8 pt-7", f ? "col-span-6" : "col-span-9")}>
+        <p className="display text-[1.5rem] leading-[1.1] text-ink/90">{group.label}</p>
+        {/* Brand-gradient underline that draws in when the dropdown opens */}
+        <motion.span
+          aria-hidden
+          initial={{ scaleX: 0 }}
+          animate={{ scaleX: 1 }}
+          transition={{ duration: 0.6, ease, delay: 0.15 }}
+          className="mt-3 block h-px w-14 origin-left rounded-full bg-[linear-gradient(90deg,#ff1f6b,#c3158a,#8f5cff)]"
+        />
+        {group.intro && <p className="mt-3 max-w-[42ch] text-[13.5px] leading-relaxed text-ink-soft">{group.intro}</p>}
+
+        <div className={cn("mt-6 grid gap-6", group.columns!.length > 1 && "grid-cols-[1.4fr_1fr]")}>
+          {group.columns!.map((col, ci) => (
+            <div key={col.heading} className={cn(ci > 0 && "border-l border-line pl-6")}>
+              <p className="mb-2 text-[12px] text-mute">{col.heading}</p>
+              <ul
+                className={cn(
+                  group.columns!.length === 1 && col.links.length > 3 ? "grid grid-cols-2 gap-x-3 gap-y-0.5" : "space-y-0.5",
+                )}
+              >
+                {col.links.map((l, li) => (
+                  <motion.li
+                    key={l.label}
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.4, ease, delay: 0.08 + (ci * 5 + li) * 0.035 }}
+                  >
+                    <Link
+                      href={to(l.href)}
+                      onClick={onNavigate}
+                      className="group -mx-3 block rounded-xl px-3 py-2.5 transition-colors hover:bg-white"
+                    >
+                      <span className="flex items-center gap-1.5 text-[15px] font-medium text-ink">
+                        {l.label}
+                        {/* Brand-gradient arrow that slides in on hover */}
+                        <span
+                          aria-hidden
+                          className="size-3.5 shrink-0 -translate-x-1 bg-[linear-gradient(90deg,#ff1f6b,#c3158a,#8f5cff)] opacity-0 transition-all group-hover:translate-x-0 group-hover:opacity-100"
+                          style={ARROW_MASK}
+                        />
+                      </span>
+                    </Link>
+                  </motion.li>
+                ))}
+              </ul>
             </div>
-          )}
-        </Link>
+          ))}
+        </div>
+      </div>
+
+      {/* 3. Feature card */}
+      {f && (
+        <div className="col-span-3 py-7 pr-7">
+          <Link
+            href={to(f.href)}
+            onClick={onNavigate}
+            className={cn(
+              "group relative flex h-full flex-col items-center justify-center overflow-hidden rounded-2xl p-6 text-center text-white",
+              // The Odoo partner card takes the "Silver Partner" blue; other feature cards stay indigo
+              f.image ? "bg-[linear-gradient(160deg,#2a86c0_0%,#17639a_50%,#0c4570_100%)]" : "bg-indigo",
+            )}
+          >
+            <div
+              aria-hidden
+              className={cn("absolute -right-10 -top-16 size-48 rounded-full blur-3xl", f.image ? "bg-[#7cc4f0]/40" : "bg-violet/50")}
+            />
+            <div
+              aria-hidden
+              className={cn("absolute -bottom-16 -left-10 size-40 rounded-full blur-3xl", f.image ? "bg-[#3fd0e0]/25" : "bg-saffron/30")}
+            />
+            {/* Odoo partner badge in white, no box (inverted and screen-blended) */}
+            {f.image && (
+              <Image
+                src={f.image.src}
+                alt={f.image.alt}
+                width={f.image.width}
+                height={f.image.height}
+                sizes="140px"
+                className="relative mb-6 h-auto w-[118px] mix-blend-screen transition-transform duration-300 [filter:grayscale(1)_invert(1)_contrast(1.35)_brightness(1.15)] group-hover:-translate-y-0.5"
+              />
+            )}
+            <p className="relative text-[15px] font-medium">{f.title}</p>
+            <p className="relative mt-2 text-[13.5px] leading-relaxed text-white/70">{f.body}</p>
+            <p className="relative mt-5 flex items-center justify-center gap-1.5 text-[13.5px] font-medium">
+              <span className="underline decoration-white/50 underline-offset-4 transition-colors group-hover:decoration-white">
+                {f.cta}
+              </span>
+              <ArrowRight className="size-3.5 transition-transform group-hover:translate-x-1" aria-hidden />
+            </p>
+          </Link>
+        </div>
       )}
     </motion.div>
   );
