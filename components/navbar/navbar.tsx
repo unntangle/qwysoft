@@ -135,14 +135,8 @@ export function Navbar() {
               className="hidden shrink-0 items-center sm:flex"
             >
               {/* odoo-logo-header.webp has wide padding; crop to the artwork (≈19–82% × 33.5–66%).
-                  Once scrolled it steps back: smaller and quieter, and over dark sections a soft white silhouette. */}
-              <span
-                className={cn(
-                  "block shrink-0 origin-left overflow-hidden transition-[opacity,scale] duration-500 hover:opacity-100",
-                  scrolled ? "scale-[0.85] opacity-65" : "",
-                )}
-                style={{ width: 100, height: 48 }}
-              >
+                  Over dark sections it shows as a white silhouette, with no white box behind it. */}
+              <span className="block shrink-0 overflow-hidden" style={{ width: 100, height: 48 }}>
                 <Image
                   src="/brand/odoo-logo-header.webp"
                   alt="Odoo Silver Partner"
