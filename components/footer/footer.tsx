@@ -51,7 +51,7 @@ export function Footer() {
             {/* Solid deep wine, lit only by a faint glow behind the orb and a soft vignette at the edges */}
             <div
               aria-hidden
-              className="pointer-events-none absolute inset-0 bg-[radial-gradient(40%_60%_at_75%_50%,rgba(224,64,143,0.14),transparent_70%),radial-gradient(120%_120%_at_50%_50%,transparent_55%,rgba(0,0,0,0.35)_100%)]"
+              className="pointer-events-none absolute inset-0 bg-[radial-gradient(40%_60%_at_25%_50%,rgba(224,64,143,0.14),transparent_70%),radial-gradient(120%_120%_at_50%_50%,transparent_55%,rgba(0,0,0,0.35)_100%)]"
             />
             <div
               aria-hidden
@@ -59,7 +59,7 @@ export function Footer() {
             />
             <div className="relative grid lg:grid-cols-2">
               {/* Copy */}
-              <div className="relative z-10 flex flex-col justify-center px-7 py-14 sm:px-12 sm:py-16 lg:px-16 lg:py-24">
+              <div className="relative z-10 flex flex-col justify-center px-7 py-14 sm:px-12 sm:py-16 lg:order-2 lg:px-16 lg:py-24">
                 <span className="w-fit rounded-full border border-[#e9c98f]/40 bg-[#e9c98f]/10 px-3.5 py-1 text-[13px] tracking-[0.02em] text-[#f1dcb4]">
                   Let&rsquo;s talk
                 </span>
@@ -106,7 +106,7 @@ export function Footer() {
               </div>
 
               {/* Tech-stack wall with the QWY orb */}
-              <div aria-hidden className="relative hidden min-h-[520px] lg:block">
+              <div aria-hidden className="relative hidden min-h-[520px] lg:order-1 lg:block">
                 <div className="absolute inset-0 flex flex-col justify-center gap-3 overflow-hidden [mask-image:radial-gradient(60%_60%_at_50%_50%,black_35%,transparent_85%)]">
                   {WALL_ROWS.map((row, r) => (
                     <div
