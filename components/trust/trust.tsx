@@ -6,11 +6,11 @@ import { STACK } from "@/lib/constants";
 
 export function Trust() {
   return (
-    <section id="trust" className="relative pb-10 pt-12 sm:pb-12 sm:pt-16" aria-labelledby="trust-title">
+    <section id="trust" className="relative pb-10 pt-8 sm:pb-12 sm:pt-8" aria-labelledby="trust-title">
       <Container>
         <div className="max-w-3xl">
           <h2 id="trust-title" className="display display-sm max-w-[18ch]">
-            Built for teams building <Grad>what comes next.</Grad>
+            Built for Teams Building <Grad>What Comes Next.</Grad>
           </h2>
           <p className="lede mt-6 max-w-[56ch]">
             From single-outlet businesses to multi-branch operations across Kerala and beyond, we build the systems that run

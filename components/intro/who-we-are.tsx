@@ -50,16 +50,16 @@ const STEPS = ["Discover", "Build", "Integrate", "Support"];
 
 export function WhoWeAre() {
   return (
-    <section id="about" className="relative overflow-hidden pb-16 pt-10 sm:pb-20" aria-labelledby="who-title">
+    <section id="about" className="relative overflow-hidden pb-10 pt-8 sm:pb-12 sm:pt-8" aria-labelledby="who-title">
       <Container>
         <div className="grid items-center gap-16 lg:grid-cols-12 lg:gap-10">
           {/* Story */}
           <div className="lg:col-span-5">
             <p className="kicker mb-6">Who we are</p>
             <h2 id="who-title" className="display display-sm">
-              Who we are
+              Who We Are
               <span className="block bg-[linear-gradient(95deg,#ff1f6b_0%,#c3158a_50%,#6a1fd0_100%)] bg-clip-text pb-[0.12em] text-transparent">
-                &amp; what we do
+                &amp; What We Do
               </span>
             </h2>
             <div className="mt-7 space-y-4 text-[1.0625rem] leading-relaxed text-ink-soft">

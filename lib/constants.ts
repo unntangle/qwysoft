@@ -355,14 +355,15 @@ export const STORY = {
   ],
 };
 
-/* ---------------- Resources ---------------- */
-// REPLACE: wire to your CMS or insights feed.
-export const RESOURCES: { kind: string; title: string; read: string; tone: Hue }[] = [
-  { kind: "Case study", title: "One ledger for fourteen stores: a retail ERP rollout", read: "7 min read", tone: "peach" },
-  { kind: "Engineering", title: "Migrating to Odoo 18 without freezing operations", read: "9 min read", tone: "lavender" },
-  { kind: "AI", title: "Demand forecasting that planners actually trust", read: "6 min read", tone: "rose" },
-  { kind: "Data", title: "Designing KPIs that survive the month-end meeting", read: "5 min read", tone: "blue" },
-  { kind: "Research", title: "What Kerala's growing businesses need from their next ERP", read: "11 min read", tone: "zari" },
+/* ---------- Resources ---------- */
+// Latest posts from the Insights page (qwysoft.com). `read` shows the publish date.
+// The first item is featured. Covers live in /public/brand/blog. Point `href` at each post once the blog URLs are final.
+export const RESOURCES: { kind: string; title: string; read: string; tone: Hue; image: string; href?: string }[] = [
+  { kind: "Blog", title: "Integrating Odoo ERP with Custom Applications for Better Business Control", read: "September 18, 2026", tone: "lavender", image: "/brand/blog/1.webp" },
+  { kind: "Blog", title: "How AI, ERP and Delivery Automation Together Drive Digital Transformation", read: "September 18, 2026", tone: "rose", image: "/brand/blog/2.webp" },
+  { kind: "Blog", title: "Key Features Every Delivery Management Software Should Have", read: "August 31, 2026", tone: "blue", image: "/brand/blog/3.webp" },
+  { kind: "Blog", title: "How Hyperlocal Delivery Businesses Can Scale with Technology", read: "August 31, 2026", tone: "peach", image: "/brand/blog/4.webp" },
+  { kind: "Blog", title: "How AI Solutions Can Improve Customer Experience and Decision-Making", read: "August 19, 2026", tone: "zari", image: "/brand/blog/5.webp" },
 ];
 
 /* ---------------- Culture ---------------- */
@@ -395,7 +396,7 @@ export const FOOTER_COLUMNS: FooterGroup[][] = [
       links: [
         { label: "Custom Software Solutions", href: "#capabilities" },
         { label: "Applied AI", href: "#capabilities" },
-        { label: "Dedicated Technology Teams", href: "#core-services" },
+        { label: "Dedicated Technology Teams", href: "#teams" },
       ],
     },
   ],
@@ -444,7 +445,6 @@ export const FOOTER_COLUMNS: FooterGroup[][] = [
         { label: "Life at QWY", href: "/about#life" },
         { label: "Career", href: "/about#careers" },
         { label: "Insights", href: "#resources" },
-        { label: "Customer Stories", href: "#story" },
         { label: "Contact", href: "#contact" },
       ],
     },

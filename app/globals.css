@@ -252,10 +252,33 @@
   animation: mark-mono 6s ease-in-out infinite;
 }
 
+/* Top menu: brand gradient text on hover and when active (open dropdown / current page) */
+.nav-hover:hover .nav-text,
+.nav-hover[data-active="true"] .nav-text {
+  background-image: linear-gradient(95deg, #ff1f6b 0%, #c3158a 50%, #8f5cff 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.nav-hover:hover svg,
+.nav-hover[data-active="true"] svg {
+  color: #c3158a;
+}
+/* Lighter gradient over dark sections so it stays readable */
+.nav-dark nav .nav-hover:hover .nav-text,
+.nav-dark nav .nav-hover[data-active="true"] .nav-text {
+  background-image: linear-gradient(95deg, #ffb3d1 0%, #ff8fc4 50%, #c9b3ff 100%);
+}
+.nav-dark nav .nav-hover:hover svg,
+.nav-dark nav .nav-hover[data-active="true"] svg {
+  color: #ff8fc4;
+}
+
 /* Navbar over dark sections: invert ink without re-rendering children. */
 .nav-dark nav a,
 .nav-dark nav button,
-.nav-dark nav .text-ink {
+.nav-dark nav .text-ink,
+.nav-dark nav .nav-label {
   color: rgba(255, 255, 255, 0.82);
 }
 .nav-dark nav a:hover,

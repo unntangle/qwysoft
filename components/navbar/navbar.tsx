@@ -4,6 +4,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { ArrowRight, ChevronDown, Menu, X } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Logo } from "@/components/ui/logo";
@@ -19,6 +20,7 @@ const to = (href: string) => (href.startsWith("#") ? `/${href}` : href);
 let reloadHandled = false;
 
 export function Navbar() {
+  const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
   const [dark, setDark] = useState(false);
   const [open, setOpen] = useState<string | null>(null);
@@ -111,14 +113,21 @@ export function Navbar() {
             <Link href="/" aria-label="QWY Software home" className="flex items-center" onClick={onLogoClick}>
               <Logo tone={scrolled && dark && !open ? "white" : "color"} height={scrolled ? 26 : 30} priority />
             </Link>
-            <span
+            {/* On load: the divider draws down, then the Odoo badge slides out from behind it, left to right */}
+            <motion.span
               aria-hidden
+              initial={{ scaleY: 0 }}
+              animate={{ scaleY: 1 }}
+              transition={{ duration: 0.45, ease, delay: 0.15 }}
               className={cn(
-                "hidden h-8 w-px sm:block",
+                "hidden h-8 w-px origin-center sm:block",
                 scrolled && dark && !open ? "bg-white/25" : "bg-line-strong",
               )}
             />
-            <a
+            <motion.a
+              initial={{ clipPath: "inset(0 100% 0 0)", x: -18, opacity: 0 }}
+              animate={{ clipPath: "inset(0 0% 0 0)", x: 0, opacity: 1, transitionEnd: { clipPath: "none" } }}
+              transition={{ duration: 0.8, ease, delay: 0.5 }}
               href="https://www.odoo.com/partners"
               target="_blank"
               rel="noopener noreferrer"
@@ -141,34 +150,41 @@ export function Navbar() {
                   style={{ width: 146, height: 136, marginTop: -43.5, marginLeft: -23.5 }}
                 />
               </span>
-            </a>
+            </motion.a>
           </div>
 
           <ul className="hidden items-center gap-1 lg:flex">
             {NAV.map((g) => (
               <li key={g.label} onMouseEnter={() => (g.columns ? openMenu(g.label) : setOpen(null))}>
                 {g.columns ? (
+                  // Dropdown menus open on hover (and keyboard focus); the label itself is not clickable
                   <button
                     type="button"
                     aria-expanded={open === g.label}
                     aria-haspopup="true"
-                    onClick={() => setOpen(open === g.label ? null : g.label)}
                     onFocus={() => openMenu(g.label)}
-                    className={cn(
-                      "flex items-center gap-1 rounded-lg px-3 py-2 text-[0.9375rem] transition-colors",
-                      open === g.label ? "text-plum" : "text-ink/80 hover:text-ink",
-                    )}
+                    data-active={open === g.label}
+                    className="nav-hover flex cursor-default items-center gap-1 rounded-lg px-3 py-2 text-[0.9375rem] text-ink/80 transition-colors"
                   >
-                    {g.label}
+                    <span className="nav-text">{g.label}</span>
                     <ChevronDown
                       className={cn("size-3.5 transition-transform duration-300", open === g.label && "rotate-180")}
                       aria-hidden
                     />
                   </button>
-                ) : (
-                  <Link href={to(g.href ?? "/")} className="rounded-lg px-3 py-2 text-[0.9375rem] text-ink/80 transition-colors hover:text-ink">
-                    {g.label}
+                ) : g.label === "Home" ? (
+                  <Link
+                    href={to(g.href ?? "/")}
+                    data-active={pathname === "/"}
+                    className="nav-hover rounded-lg px-3 py-2 text-[0.9375rem] text-ink/80 transition-colors"
+                  >
+                    <span className="nav-text">{g.label}</span>
                   </Link>
+                ) : (
+                  // Every other top-level item is a plain label for now
+                  <span className="nav-hover nav-label cursor-default rounded-lg px-3 py-2 text-[0.9375rem] text-ink/80">
+                    <span className="nav-text">{g.label}</span>
+                  </span>
                 )}
               </li>
             ))}
@@ -334,10 +350,14 @@ function MobileMenu({ onNavigate }: { onNavigate: () => void }) {
                   )}
                 </AnimatePresence>
               </>
-            ) : (
+            ) : g.label === "Home" ? (
               <Link href={to(g.href ?? "/")} onClick={onNavigate} className="block py-4">
                 <span className="display text-[1.75rem]">{g.label}</span>
               </Link>
+            ) : (
+              <span className="block py-4">
+                <span className="display text-[1.75rem] text-ink/70">{g.label}</span>
+              </span>
             )}
           </li>
         ))}

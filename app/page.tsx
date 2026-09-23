@@ -9,11 +9,11 @@ import { Navbar } from "@/components/navbar/navbar";
 import { Resources } from "@/components/resources/resources";
 import { Accelerators } from "@/components/solutions/accelerators";
 import { Solutions } from "@/components/solutions/solutions";
-import { CustomerStory } from "@/components/testimonials/customer-story";
+import { DedicatedTeams } from "@/components/teams/dedicated-teams";
 import { Trust } from "@/components/trust/trust";
 
 // Removed from the homepage (components kept in the codebase): Intelligence
-// (Applied AI), DataSection (Real-time insights), Enterprise, Developers, Culture (team teaser), Engagement (pricing), Decisions.
+// (Applied AI), DataSection (Real-time insights), Enterprise, Developers, Culture (team teaser), Engagement (pricing), Decisions, CustomerStory.
 export default function HomePage() {
   return (
     <>
@@ -26,9 +26,9 @@ export default function HomePage() {
         <CoreServices />
         <Capabilities />
         <Solutions />
+        <DedicatedTeams />
         <Accelerators />
         <KeyBenefits />
-        <CustomerStory />
         <Resources />
       </main>
       <Footer />

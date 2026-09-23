@@ -124,11 +124,11 @@ export function CoreServices() {
   return (
     <MotionConfig reducedMotion="user">
       <section id="core-services" className="relative" aria-labelledby="core-services-title">
-        <Container className="pt-16 sm:pt-20">
+        <Container className="pt-8">
           <div className="max-w-3xl">
             <p className="kicker mb-6">What we do</p>
             <h2 id="core-services-title" className="display display-sm max-w-[18ch]">
-              Our <Grad>core services</Grad>
+              Our <Grad>Core Services</Grad>
             </h2>
             <p className="lede mt-6 max-w-[56ch]">
               Four ways we help, delivered by one team: from the first workshop to go-live and the improvements after it.
@@ -138,7 +138,7 @@ export function CoreServices() {
 
         {/* Desktop: pinned service console */}
         <div ref={ref} className="relative hidden lg:block" style={{ height: `${SERVICES.length * 90 + 10}vh` }}>
-          <div className="sticky top-16 flex overflow-hidden pb-32 pt-8">
+          <div className="sticky top-16 flex overflow-hidden pb-12 pt-8">
             <div
               aria-hidden
               className="grid-faint pointer-events-none absolute inset-0 [mask-image:radial-gradient(55%_60%_at_70%_55%,black,transparent)]"
@@ -167,7 +167,7 @@ export function CoreServices() {
         </div>
 
         {/* Mobile and tablet: stacked */}
-        <Container className="space-y-14 pb-24 pt-12 lg:hidden">
+        <Container className="space-y-14 pb-10 pt-12 lg:hidden">
           {SERVICES.map((s, i) => (
             <div key={s.key}>
               <p className="tnum font-mono text-[12px] text-plum">{`0${i + 1} / 0${SERVICES.length}`}</p>
@@ -332,9 +332,9 @@ function Pipeline({ progress }: { progress: MotionValue<number> }) {
 
 function PipelineStep({ label, index, progress }: { label: string; index: number; progress: MotionValue<number> }) {
   const at = index / (STEPS.length - 1);
-  const on = useTransform<number, number>(progress, (v) => (v >= at - 0.02 ? 1 : 0));
-  const dot = useTransform<number, string>(on, [0, 1], ["rgba(255,255,255,0.14)", "#ff3d86"]);
-  const text = useTransform<number, number>(on, [0, 1], [0.45, 1]);
+  const on = useTransform(progress, (v) => (v >= at - 0.02 ? 1 : 0));
+  const dot = useTransform(on, [0, 1], ["rgba(255,255,255,0.14)", "#ff3d86"]);
+  const text = useTransform(on, [0, 1], [0.45, 1]);
   const last = index === STEPS.length - 1;
   return (
     <li className={cn("flex flex-col gap-2", index === 0 ? "items-start" : last ? "items-end" : "items-center")}>

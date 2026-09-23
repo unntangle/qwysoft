@@ -1,17 +1,48 @@
-import { ArrowUpRight, Timer } from "lucide-react";
+"use client";
+
+import { motion } from "framer-motion";
 import { Container } from "@/components/ui/container";
 import { Grad } from "@/components/ui/grad";
-import { Thumb } from "@/components/ui/thumb";
+import { AcceleratorArt } from "@/components/solutions/accelerator-art";
 import { ACCELERATORS } from "@/lib/constants";
+
+/* ------------------------------------------------------------------
+   Pre-built platforms, five in a row, styled like Sarvam's customer-
+   story cards: white card with a pale tile (fading to white, the
+   platform's short name set bold like a logo), then the name,
+   description and a quiet "Live in … · Platform" line.
+------------------------------------------------------------------- */
+
+// Short, wordmark-style label for each tile
+const shortName = (name: string) => {
+  const n = name.toLowerCase();
+  if (n.includes("crm")) return "CRM & HRMS";
+  if (n.includes("commerce")) return "E-commerce";
+  if (n.includes("analytics")) return "Analytics & BI";
+  if (n.includes("marketplace")) return "Marketplace";
+  if (n.includes("fleet")) return "Fleet";
+  return name;
+};
+
+// Very pale tints that fade to white, like Sarvam's logo tiles
+const PALE = [
+  "bg-[linear-gradient(180deg,#f7eed9_0%,#fbf8f0_75%,#ffffff_100%)]", // gold
+  "bg-[linear-gradient(180deg,#fce9de_0%,#fef7f2_75%,#ffffff_100%)]", // peach
+  "bg-[linear-gradient(180deg,#ebe6fb_0%,#f7f5fe_75%,#ffffff_100%)]", // lavender
+  "bg-[linear-gradient(180deg,#fbe4ea_0%,#fdf5f7_75%,#ffffff_100%)]", // rose
+  "bg-[linear-gradient(180deg,#e4e9fb_0%,#f6f8fe_75%,#ffffff_100%)]", // blue
+];
+
+const ease = [0.22, 1, 0.36, 1] as const;
 
 export function Accelerators() {
   return (
-    <section id="accelerators" className="pb-16 sm:pb-24" aria-labelledby="accelerators-title">
+    <section id="accelerators" className="pb-10 sm:pb-12" aria-labelledby="accelerators-title">
       <Container>
-        <div className="border-t border-line pt-16">
+        <div className="border-t border-line pt-8">
           <div className="max-w-3xl">
             <h2 id="accelerators-title" className="display display-sm max-w-[18ch]">
-              Pre-built platforms, so you start at <Grad>eighty percent.</Grad>
+              Pre-Built Platforms, So You Start at <Grad>Eighty Percent.</Grad>
             </h2>
             <p className="lede mt-6 max-w-[56ch]">
               Proven starting points for common operations. Less implementation time, with full room to customise the part
@@ -22,28 +53,34 @@ export function Accelerators() {
 
         <ul className="mt-14 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
           {ACCELERATORS.map((a, i) => (
-            <li key={a.name}>
+            <motion.li
+              key={a.name}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.3 }}
+              transition={{ duration: 0.6, delay: i * 0.07, ease }}
+            >
               <a
                 href="#contact"
-                className="group block h-full overflow-hidden rounded-[var(--radius-card)] border border-line bg-white transition-shadow duration-500 hover:shadow-[0_30px_60px_-30px_rgba(90,45,140,0.35)]"
+                className="group flex h-full flex-col rounded-2xl border border-line bg-white p-2 transition-shadow duration-500 hover:shadow-[0_24px_48px_-32px_rgba(23,19,31,0.35)]"
               >
-                <Thumb hue={a.hue} seed={i + 2} className="aspect-[4/3]">
-                  <div className="flex h-full flex-col justify-between p-5">
-                    <span className="inline-flex w-fit items-center gap-1.5 rounded-md bg-white/80 px-2 py-1 text-[12px] font-medium text-ink backdrop-blur">
-                      <Timer className="size-3.5" aria-hidden /> Live in {a.weeks}
-                    </span>
-                    <ArrowUpRight
-                      className="size-5 self-end text-ink/60 transition-transform duration-500 group-hover:-translate-y-1 group-hover:translate-x-1"
-                      aria-hidden
-                    />
+                {/* Flat geometric illustration */}
+                <div className="relative aspect-[4/3] overflow-hidden rounded-xl">
+                  <div className="absolute inset-0 transition-[scale] duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.05]">
+                    <AcceleratorArt name={a.name} />
                   </div>
-                </Thumb>
-                <div className="p-5">
-                  <h3 className="text-[1.0625rem] font-semibold tracking-[-0.015em]">{a.name}</h3>
-                  <p className="mt-1.5 text-[0.9375rem] leading-relaxed text-ink-soft">{a.body}</p>
+                </div>
+
+                {/* Text */}
+                <div className="flex flex-1 flex-col px-3 pb-2 pt-4">
+                  <h3 className="text-[1.05rem] font-normal leading-snug tracking-[-0.01em] text-ink">{a.name}</h3>
+                  <p className="mt-2 text-[0.9rem] leading-relaxed text-ink-soft">{a.body}</p>
+                  <p className="mt-auto pt-5 text-[12.5px] text-ink-soft">
+                    Live in {a.weeks} <span className="px-1.5 text-mute">·</span> Platform
+                  </p>
                 </div>
               </a>
-            </li>
+            </motion.li>
           ))}
         </ul>
       </Container>

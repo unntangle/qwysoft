@@ -33,7 +33,7 @@ export function PlatformIntro() {
   // settle bounce.
   const stackRef = useRef<HTMLDivElement>(null);
   const reduce = useReducedMotion();
-  const { scrollYProgress } = useScroll({ target: stackRef, offset: ["start 18%", "start -45%"] });
+  const { scrollYProgress } = useScroll({ target: stackRef, offset: ["start 60%", "start 0%"] });
   const progress = useSpring(scrollYProgress, { stiffness: 140, damping: 18, mass: 0.7 });
   // Extend: first half of the scroll
   const yExtend = useTransform(progress, [0, 0.45], [-190, 0]);
@@ -51,13 +51,13 @@ export function PlatformIntro() {
         : { y: yRun, rotate: rotRun, opacity: fadeRun };
 
   return (
-    <section id="platform" className="relative overflow-hidden pb-16 pt-12 sm:pb-20 sm:pt-16" aria-labelledby="platform-title">
+    <section id="platform" className="relative overflow-hidden pb-10 pt-8 sm:pb-12 sm:pt-8" aria-labelledby="platform-title">
       <Container>
         <div className="grid items-center gap-16 lg:grid-cols-12 lg:gap-10">
           <div className="lg:col-span-5 lg:col-start-8 lg:row-start-1">
             <p className="kicker mb-6">How it fits together</p>
             <h2 id="platform-title" className="display display-sm">
-              One system for how your business <Grad>actually works.</Grad>
+              One System for How Your Business <Grad>Actually Works.</Grad>
             </h2>
             <div className="mt-8 space-y-5 text-[1.0625rem] leading-relaxed text-ink-soft">
               <p>

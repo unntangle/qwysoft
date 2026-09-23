@@ -34,6 +34,7 @@ import {
 } from "lucide-react";
 import { Fragment, useRef } from "react";
 import { Sparkline } from "@/components/dashboard/charts";
+import { CapabilityArt } from "@/components/features/capability-art";
 import { Container } from "@/components/ui/container";
 import { Counter } from "@/components/ui/counter";
 import { Grad } from "@/components/ui/grad";
@@ -146,19 +147,15 @@ export function Capabilities() {
   const { scrollYProgress } = useScroll({ target: stackRef, offset: ["start start", "end end"] });
 
   return (
-    <section id="capabilities" className="relative bg-paper py-16 sm:py-24" aria-labelledby="capabilities-title">
-      <div
-        aria-hidden
-        className="grid-faint pointer-events-none absolute inset-0 [mask-image:linear-gradient(180deg,transparent,black_15%,black_85%,transparent)]"
-      />
+    <section id="capabilities" className="relative pb-10 pt-8 sm:pb-12 sm:pt-8" aria-labelledby="capabilities-title">
       <Container className="relative">
         <SectionIntro
-          className="max-w-5xl"
+          className="mx-auto max-w-5xl text-center [&_p.lede]:mx-auto"
           kicker="Custom Software Solutions"
           titleClassName="xl:whitespace-nowrap"
           title={
             <span id="capabilities-title">
-              Software that <Grad>fits your business</Grad>,<br className="hidden xl:block" /> not the other way around.
+              Software That <Grad>Fits Your Business</Grad>,<br className="hidden xl:block" /> Not the Other Way Around.
             </span>
           }
           body="Whether it is a new platform or an existing system that needs to grow up, we build tools that are practical, reliable and easy to scale."
@@ -177,112 +174,259 @@ export function Capabilities() {
 function StackCard({ c, i, n, progress }: { c: Chapter; i: number; n: number; progress: MotionValue<number> }) {
   const reduce = useReducedMotion();
   const last = i === n - 1;
-  const dark = i % 2 === 1; // alternate light / dark so the pile reads as separate cards
-  const Icon = c.icon;
-  // Once the next card starts covering this one, ease it back and dim it a touch
-  const targetScale = 1 - (n - 1 - i) * 0.035;
+  // Once the next card starts covering this one, ease it back a touch
+  const targetScale = 1 - (n - 1 - i) * 0.03;
   const scale = useTransform(progress, [i / n, 1], [1, targetScale]);
-  const dim = useTransform(progress, [i / n, (i + 1) / n], [0, dark ? 0.25 : 0.12]);
 
   return (
     <li
-      className={cn("mb-6 lg:sticky lg:h-[min(440px,calc(100vh-150px))]", last ? "lg:mb-0" : "lg:mb-[14vh]")}
-      style={{ top: 104 + i * 16 }}
+      className={cn("mb-5 lg:sticky lg:h-[min(380px,calc(100vh-150px))]", last ? "lg:mb-0" : "lg:mb-[14vh]")}
+      style={{ top: 104 + i * 14 }}
     >
       <motion.div
-        initial={{ opacity: 0, y: 40 }}
+        initial={{ opacity: 0, y: 30 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, amount: 0.2 }}
         transition={{ duration: 0.7, ease }}
         style={reduce ? undefined : { scale, transformOrigin: "50% 0%" }}
-        className={cn(
-          "relative h-full overflow-hidden rounded-[28px] border shadow-[0_-24px_60px_-34px_rgba(45,22,90,0.35),0_30px_60px_-40px_rgba(45,22,90,0.3)]",
-          dark ? "border-white/10 bg-night text-white" : "border-line bg-white text-ink",
-        )}
+        className="h-full rounded-2xl border border-line bg-white p-2 shadow-[0_-18px_40px_-34px_rgba(23,19,31,0.25)]"
       >
-        {/* Accent glow behind the visual, and a gradient edge along the top */}
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-0"
-          style={{
-            background: `radial-gradient(55% 80% at 78% 50%, ${c.accent}${dark ? "33" : "1f"}, transparent 70%), radial-gradient(40% 60% at 0% 100%, ${c.accent}${dark ? "1f" : "12"}, transparent 70%)`,
-          }}
-        />
-        {dark && <div aria-hidden className="grid-night pointer-events-none absolute inset-0 opacity-60" />}
-        {/* Big outlined number */}
-        <span
-          aria-hidden
-          className="pointer-events-none absolute -bottom-10 right-6 select-none text-[190px] font-semibold leading-none tracking-[-0.06em] text-transparent"
-          style={{ WebkitTextStroke: `1.5px ${dark ? "rgba(255,255,255,0.08)" : "rgba(23,19,31,0.07)"}` }}
-        >
-          {String(i + 1).padStart(2, "0")}
-        </span>
+        <div className="grid h-full gap-2 lg:grid-cols-[0.9fr_1.1fr]">
+          {/* Flat illustration, filling the panel */}
+          <div className="group/art relative min-h-[240px] overflow-hidden rounded-xl">
+            <div className="absolute inset-0 transition-[scale] duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover/art:scale-[1.04]">
+              <CapabilityArt index={i} />
+            </div>
+          </div>
 
-        <div className="relative grid h-full gap-8 p-6 sm:p-9 lg:grid-cols-[1fr_1.05fr] lg:items-center lg:gap-12 lg:p-10">
-          {/* Text */}
-          <motion.div variants={textStagger} initial="hidden" whileInView="show" viewport={{ once: true, amount: 0.4 }}>
-            <motion.div variants={rise} className="flex items-center gap-3">
-              <span
-                className="grid size-10 place-items-center rounded-xl"
-                style={{ background: `${c.accent}${dark ? "2e" : "17"}`, color: dark ? "#fff" : c.accent }}
-              >
-                <Icon className="size-[18px]" strokeWidth={1.75} aria-hidden />
-              </span>
-            </motion.div>
-            <motion.h3
-              variants={rise}
-              className="mt-5 text-[clamp(1.6rem,1.1rem+1.4vw,2.3rem)] font-semibold leading-[1.08] tracking-[-0.03em]"
-            >
+          {/* Text, with a quiet pattern in its two right-hand corners */}
+          <div className="relative">
+            <CornerPattern color={CARD_TONES[i % CARD_TONES.length].fill} variant={i} />
+          <motion.div
+            variants={textStagger}
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, amount: 0.4 }}
+            className="relative flex h-full flex-col px-4 py-5 sm:px-6 lg:py-7"
+          >
+            <motion.h3 variants={rise} className="text-[1.35rem] font-medium leading-snug tracking-[-0.02em]">
               {c.title}
             </motion.h3>
-            <motion.p
-              variants={rise}
-              className={cn("mt-3 max-w-[50ch] text-[0.975rem] leading-relaxed", dark ? "text-white/65" : "text-ink-soft")}
-            >
+            <motion.p variants={rise} className="mt-3 max-w-[54ch] text-[0.975rem] leading-relaxed text-ink-soft">
               {c.body}
             </motion.p>
             {c.tags && (
-              <motion.ul variants={rise} className="mt-5 flex flex-wrap gap-1.5">
-                {c.tags.map((tag) => (
-                  <li
-                    key={tag}
-                    className={cn(
-                      "flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[12px]",
-                      dark ? "border-white/15 bg-white/5 text-white/75" : "border-line bg-white/80 text-ink-soft",
-                    )}
-                  >
-                    <span className="size-1.5 rounded-full" style={{ background: c.accent }} />
-                    {tag}
-                  </li>
-                ))}
-              </motion.ul>
+              <motion.p variants={rise} className="mt-auto pt-6 text-[12.5px] text-mute">
+                {c.tags.join("  ·  ")}
+              </motion.p>
             )}
           </motion.div>
-
-          {/* Product visual on a dotted panel */}
-          <motion.div
-            initial={{ opacity: 0, y: 30, filter: "blur(8px)" }}
-            whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-            viewport={{ once: true, amount: 0.3 }}
-            transition={{ duration: 0.8, delay: 0.15, ease }}
-            className={cn(
-              "relative rounded-2xl p-5 ring-1 backdrop-blur-sm sm:p-6",
-              dark
-                ? "bg-white/[0.04] ring-white/10 [background-image:radial-gradient(rgba(255,255,255,0.09)_1px,transparent_1px)] [background-size:14px_14px]"
-                : "bg-ivory/60 ring-line [background-image:radial-gradient(rgba(23,19,31,0.08)_1px,transparent_1px)] [background-size:14px_14px]",
-            )}
-          >
-            {c.visual(dark)}
-          </motion.div>
+          </div>
         </div>
-
-        {!last && !reduce && (
-          <motion.div aria-hidden className="pointer-events-none absolute inset-0 bg-ink" style={{ opacity: dim }} />
-        )}
       </motion.div>
     </li>
   );
 }
+
+/** Decorative corners for the text side, in the card's own colour; each card gets its own pair of patterns */
+function CornerPattern({ color, variant }: { color: string; variant: number }) {
+  const fadeTR = "[mask-image:radial-gradient(100%_100%_at_100%_0%,black_30%,transparent_78%)]";
+  const fadeBR = "[mask-image:radial-gradient(100%_100%_at_100%_100%,black_35%,transparent_80%)]";
+  const v = variant % 3;
+  return (
+    <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden rounded-xl">
+      {/* Top-right */}
+      {v === 0 && (
+        <div
+          className={`absolute right-0 top-0 size-52 [background-size:16px_16px] [background-position:8px_8px] ${fadeTR}`}
+          style={{ backgroundImage: `radial-gradient(${color} 1.6px, transparent 1.8px)`, opacity: 0.6 }}
+        />
+      )}
+      {v === 1 && (
+        <svg className={`absolute right-0 top-0 size-52 ${fadeTR}`} viewBox="0 0 200 200" style={{ opacity: 0.6 }}>
+          <defs>
+            <pattern id="plus" width="20" height="20" patternUnits="userSpaceOnUse">
+              <path d="M10 6 V14 M6 10 H14" stroke={color} strokeWidth="1.5" strokeLinecap="round" />
+            </pattern>
+          </defs>
+          <rect width="200" height="200" fill="url(#plus)" />
+        </svg>
+      )}
+      {v === 2 && (
+        <svg className={`absolute right-0 top-0 size-60 ${fadeTR}`} viewBox="0 0 200 200">
+          {[24, 48, 72, 96, 120, 144, 168].map((r, k) => (
+            <circle key={r} cx="200" cy="0" r={r} fill="none" stroke={color} strokeOpacity={0.6 - k * 0.06} strokeWidth="1.3" />
+          ))}
+        </svg>
+      )}
+
+      {/* Bottom-right */}
+      {v === 0 && (
+        <svg viewBox="0 0 120 120" className="absolute bottom-0 right-0 size-56">
+          {[20, 34, 48, 62, 76, 90, 104].map((r, k) => (
+            <path
+              key={r}
+              d={`M120 ${120 - r} A ${r} ${r} 0 0 0 ${120 - r} 120`}
+              fill="none"
+              stroke={color}
+              strokeOpacity={0.6 - k * 0.07}
+              strokeWidth="1.1"
+            />
+          ))}
+        </svg>
+      )}
+      {v === 1 && (
+        <svg viewBox="0 0 200 140" className={`absolute bottom-0 right-0 h-40 w-64 ${fadeBR}`}>
+          {[30, 50, 70, 90, 110, 130].map((y, k) => (
+            <path
+              key={y}
+              d={`M0 ${y} C 25 ${y - 14}, 50 ${y + 14}, 75 ${y} S 125 ${y - 14}, 150 ${y} S 200 ${y + 14}, 200 ${y}`}
+              fill="none"
+              stroke={color}
+              strokeOpacity={0.35 + k * 0.06}
+              strokeWidth="1.3"
+            />
+          ))}
+        </svg>
+      )}
+      {v === 2 && (
+        <svg viewBox="0 0 160 160" className="absolute bottom-0 right-0 size-52">
+          <defs>
+            <clipPath id="corner-tri">
+              <path d="M160 20 V160 H20 Z" />
+            </clipPath>
+          </defs>
+          <g clipPath="url(#corner-tri)" stroke={color} strokeOpacity="0.5" strokeWidth="1.3">
+            {Array.from({ length: 16 }, (_, k) => (
+              <path key={k} d={`M${k * 12 - 20} 180 L${k * 12 + 160} 0`} />
+            ))}
+          </g>
+        </svg>
+      )}
+    </div>
+  );
+}
+
+/* ---------- Sarvam-style soft graphics, one per card, each in its own colour shade ---------- */
+
+type CardTone = { ink: string; fill: string; soft: string; wash: string; panel: string; glow: string };
+
+const CARD_TONES: CardTone[] = [
+  // Web: periwinkle
+  { ink: "#3f45b5", fill: "#a9b1f6", soft: "#e3e6fe", wash: "#eef0fd", panel: "#f4f4fb", glow: "99,110,230" },
+  // Mobile: apricot
+  { ink: "#a0521f", fill: "#f3b58a", soft: "#fde6d5", wash: "#fdf1e8", panel: "#fbf6f2", glow: "230,140,80" },
+  // AI: rose
+  { ink: "#a8266a", fill: "#f1a7c8", soft: "#fbdfeb", wash: "#fcedf4", panel: "#fbf4f7", glow: "220,90,150" },
+];
+
+function CardGraphic({ index }: { index: number }) {
+  const t = CARD_TONES[index % CARD_TONES.length];
+  if (index === 0) return <WebGraphic t={t} />;
+  if (index === 1) return <MobileGraphic t={t} />;
+  return <AiGraphic t={t} />;
+}
+
+/** Web: a big page-load figure beside a glossy lightning bolt */
+function WebGraphic({ t }: { t: CardTone }) {
+  return (
+    <div className="mx-auto flex max-w-[340px] items-center justify-between gap-6">
+      <div>
+        <p className="text-[3.25rem] font-light leading-none tracking-[-0.04em]" style={{ color: t.ink }}>
+          ~200<span className="ml-1 text-[1.15rem] tracking-normal">ms</span>
+        </p>
+        <p className="mt-10 text-[12.5px] text-[#9a9aa8]">Median page load</p>
+      </div>
+      <svg viewBox="0 0 24 24" className="size-28 shrink-0" style={{ filter: `drop-shadow(0 14px 22px rgba(${t.glow},0.35))` }} aria-hidden>
+        <defs>
+          <linearGradient id="bolt" x1="0.2" x2="0.8" y1="0" y2="1">
+            <stop offset="0" stopColor={t.soft} />
+            <stop offset="0.55" stopColor={t.fill} />
+            <stop offset="1" stopColor={t.soft} />
+          </linearGradient>
+        </defs>
+        <path d="M14.2 1.8 4.6 13.4c-.4.5 0 1.2.6 1.2h5.6l-1.6 7.1c-.1.6.6.9 1 .5l9.3-11.6c.4-.5 0-1.2-.6-1.2h-5.5l1.8-7.1c.1-.6-.6-.9-1-.5Z" fill="url(#bolt)" />
+      </svg>
+    </div>
+  );
+}
+
+/** Mobile: a calm settings panel, like Sarvam's voice controls */
+function MobileGraphic({ t }: { t: CardTone }) {
+  return (
+    <div className="mx-auto w-full max-w-[260px] space-y-4 text-[12px]">
+      <div>
+        <p className="text-ink-soft">Platforms</p>
+        <div className="mt-1.5 grid grid-cols-2 gap-1 rounded-full border border-line bg-white p-1">
+          {["iOS", "Android"].map((p) => (
+            <span key={p} className="rounded-full py-1.5 text-center font-medium" style={{ background: t.wash, color: t.ink }}>
+              {p}
+            </span>
+          ))}
+        </div>
+      </div>
+      <div className="flex items-center justify-between rounded-full border border-line bg-white px-4 py-2.5">
+        <span className="text-ink">Offline mode</span>
+        <span className="relative h-5 w-9 rounded-full" style={{ background: t.fill }}>
+          <span className="absolute right-0.5 top-0.5 size-4 rounded-full bg-white shadow" />
+        </span>
+      </div>
+      <div>
+        <p className="text-ink-soft">Sync</p>
+        <div className="mt-1.5 flex items-center justify-between rounded-full border border-line bg-white px-4 py-2.5">
+          <span className="flex items-center gap-2 text-ink">
+            <span className="size-3.5 rounded-full" style={{ background: `linear-gradient(135deg, ${t.soft}, ${t.fill})` }} />
+            Real-time with Odoo
+          </span>
+          <svg viewBox="0 0 16 16" className="size-3.5 text-mute" aria-hidden>
+            <path d="M4 6l4 4 4-4" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+          </svg>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/** AI: a glossy "ready" card with soft data lines, glowing like Sarvam's */
+function AiGraphic({ t }: { t: CardTone }) {
+  return (
+    <div
+      className="mx-auto w-[220px] rounded-[30px] p-5"
+      style={{
+        background: `linear-gradient(180deg, ${t.wash}, ${t.soft})`,
+        boxShadow: `0 20px 40px -18px rgba(${t.glow},0.55), inset 0 0 0 4px ${t.soft}`,
+      }}
+    >
+      <div className="flex items-start justify-between">
+        <p className="text-[8.5px] font-semibold uppercase tracking-[0.14em]" style={{ color: t.ink }}>
+          Your Odoo data
+        </p>
+        <svg viewBox="0 0 24 24" className="size-5" aria-hidden>
+          <path
+            d="M12 3c.4 3.6 2.4 5.6 6 6-3.6.4-5.6 2.4-6 6-.4-3.6-2.4-5.6-6-6 3.6-.4 5.6-2.4 6-6Z"
+            fill="none"
+            stroke={t.fill}
+            strokeWidth="1.4"
+            strokeLinejoin="round"
+          />
+        </svg>
+      </div>
+      <div className="mt-4 space-y-2">
+        {[0, 1, 2].map((k) => (
+          <span key={k} className="block h-2.5 w-[70%] rounded-full" style={{ background: t.fill }} />
+        ))}
+      </div>
+      <p className="mt-6 text-[1.35rem] font-normal tracking-[-0.02em] text-ink">Forecast ready</p>
+    </div>
+  );
+}
+
+// Pastel tiles, one per card, in the manner of Sarvam's customer-story logos
+const PANELS = [
+  { bg: "bg-[linear-gradient(180deg,#eef0fd,#dfe3fb)]", ink: "#4b4fb8" },
+  { bg: "bg-[linear-gradient(180deg,#fdf3ec,#fbe3d4)]", ink: "#b4582a" },
+  { bg: "bg-[linear-gradient(180deg,#fcf0f5,#f8dde9)]", ink: "#a8266a" },
+];
 
 /* ---------- Infographics for the three solutions (theme-aware, animate when in view) ---------- */
 

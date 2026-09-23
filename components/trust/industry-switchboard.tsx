@@ -96,7 +96,7 @@ export function IndustrySwitchboard() {
   // smaller and lower, and "boots up" flat, with a scan line sweeping down it
   // and the grid drifting underneath.
   const cardRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress: cardScroll } = useScroll({ target: cardRef, offset: ["start 62%", "start 12%"] });
+  const { scrollYProgress: cardScroll } = useScroll({ target: cardRef, offset: ["start 90%", "start 45%"] });
   const cardP = useSpring(cardScroll, { stiffness: 110, damping: 22, mass: 0.6 });
   const cardRotateX = useTransform(cardP, [0, 1], [24, 0]);
   const cardScale = useTransform(cardP, [0, 1], [0.86, 1]);
@@ -371,9 +371,10 @@ export function IndustrySwitchboard() {
               {!reduce && (
                 <span aria-hidden className="absolute -inset-1.5 animate-pulse rounded-[20px] ring-2 ring-[#ff1f6b]/25" />
               )}
-              <span className="relative text-center leading-tight">
+              <span className="relative flex flex-col items-center text-center leading-tight">
                 <span className="block text-[15px] font-semibold tracking-[0.04em]">QWY</span>
-                <span className="block text-[11px] text-white/75">+ Odoo core</span>
+                <span className="block text-[11px] leading-none text-white/75">+</span>
+                <span className="block text-[11px] text-white/75">Odoo core</span>
               </span>
             </div>
 

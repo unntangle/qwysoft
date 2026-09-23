@@ -43,7 +43,7 @@ export function Footer() {
     <footer className="px-2 pb-2 sm:px-3 sm:pb-3" aria-labelledby="contact-title">
       <div className="overflow-hidden rounded-b-[44px] bg-[linear-gradient(180deg,#fbf9f5_0%,#fbf9f5_22%,rgba(251,249,245,0.82)_36%,rgba(251,249,245,0.6)_50%,rgba(251,249,245,0.42)_64%,rgba(251,249,245,0.3)_100%),linear-gradient(100deg,#ff1f6b_0%,#d0157c_30%,#8e0f9c_62%,#5a0aa6_100%)] px-2 pb-2 sm:px-4 sm:pb-3">
         {/* Closing call to action: dark card, copy on the left, tech-stack wall with a glowing QWY orb on the right */}
-        <section id="contact" className="px-1 pb-24 pt-16 sm:px-2 sm:pb-32 sm:pt-24">
+        <section id="contact" className="px-1 pb-24 pt-8 sm:px-2 sm:pb-32">
           <div
             data-nav="dark"
             className="grain relative overflow-hidden rounded-[32px] bg-[#2a0a22] text-white ring-1 ring-white/10 shadow-[0_40px_90px_-40px_rgba(42,10,34,0.8),inset_0_1px_0_rgba(255,255,255,0.08)]"
@@ -64,9 +64,9 @@ export function Footer() {
                   Let&rsquo;s talk
                 </span>
                 <h2 id="contact-title" className="display display-sm mt-6 max-w-[16ch] text-white">
-                  Accelerate growth with{" "}
+                  Accelerate Growth with{" "}
                   <span className="bg-[linear-gradient(95deg,#f3d9a8_0%,#ff9ec4_45%,#c9b3ff_100%)] bg-clip-text text-transparent">
-                    next-gen technology.
+                    Next-Gen Technology.
                   </span>
                 </h2>
                 <p className="mt-5 max-w-[40ch] text-[1.125rem] leading-relaxed text-white/72">
@@ -156,8 +156,8 @@ export function Footer() {
           {/* Closing statement between the contact card and the footer panel */}
           <div className="mx-auto mt-24 max-w-3xl px-4 text-center sm:mt-32">
             <h2 className="display display-sm text-ink">
-              Build the systems your
-              <br className="hidden sm:block" /> business runs on, with one partner.
+              Build the Systems Your
+              <br className="hidden sm:block" /> Business Runs On, with One Partner.
             </h2>
             <div className="mt-8 flex flex-wrap justify-center gap-3">
               <Button href={mail}>Book a consultation</Button>
