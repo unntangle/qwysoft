@@ -89,7 +89,7 @@ export function HeroCentered({ slides, actions }: { slides: HeroSlide[]; actions
       onBlur={() => setPaused(false)}
     >
       {/* Height reserved for two lines so nothing below moves while typing */}
-      <h1 id="hero-title" className="display display-lg relative min-h-[2.1em] text-white">
+      <h1 id="hero-title" className="hx-head display display-lg relative min-h-[2.1em] text-white">
         <span className="sr-only" aria-live="polite">
           {`${accent} ${title}`}
         </span>
@@ -107,7 +107,7 @@ export function HeroCentered({ slides, actions }: { slides: HeroSlide[]; actions
         </span>
       </h1>
 
-      <div className="relative mx-auto mt-6 min-h-[5.2em] max-w-[60ch] text-[1.0625rem] leading-relaxed text-white/70">
+      <div className="hx-3 relative mx-auto mt-6 min-h-[5.2em] max-w-[60ch] text-[1.0625rem] leading-relaxed text-white/70">
         <AnimatePresence mode="wait" initial={false}>
           <motion.p
             key={index}
@@ -121,7 +121,7 @@ export function HeroCentered({ slides, actions }: { slides: HeroSlide[]; actions
         </AnimatePresence>
       </div>
 
-      <div className="mt-6 flex flex-wrap justify-center gap-3">{actions}</div>
+      <div className="hx-1 mt-6 flex flex-wrap justify-center gap-3">{actions}</div>
 
       {/* Slide indicators */}
       <div className="mt-8 flex items-center justify-center gap-2" role="tablist" aria-label="Hero messages">

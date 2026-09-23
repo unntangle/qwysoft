@@ -1,6 +1,13 @@
 "use client";
 
-import { AnimatePresence, motion } from "framer-motion";
+import {
+  AnimatePresence,
+  motion,
+  useMotionValue,
+  useReducedMotion,
+  useScroll,
+  useSpring,
+} from "framer-motion";
 import { ArrowRight, ChevronDown, Menu, X } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -8,6 +15,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Logo } from "@/components/ui/logo";
+import { Magnetic } from "@/components/ui/magnetic";
 import { NAV, type NavGroup } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 
@@ -25,6 +33,18 @@ export function Navbar() {
   const [dark, setDark] = useState(false);
   const [open, setOpen] = useState<string | null>(null);
   const [mobile, setMobile] = useState(false);
+  const [hovered, setHovered] = useState<string | null>(null);
+  // Smart header: tucks away while scrolling down, glides back on any scroll up
+  const [hidden, setHidden] = useState(false);
+  const reduce = useReducedMotion();
+  // Scroll progress for the gradient line along the bottom of the bar
+  const { scrollYProgress } = useScroll();
+  const progress = useSpring(scrollYProgress, { stiffness: 140, damping: 30, mass: 0.3 });
+  // Cursor spotlight that glides along the bar
+  const spotX = useMotionValue(0);
+  const spotOn = useMotionValue(0);
+  const spotXs = useSpring(spotX, { stiffness: 260, damping: 36 });
+  const spotOns = useSpring(spotOn, { stiffness: 180, damping: 30 });
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
@@ -32,11 +52,18 @@ export function Navbar() {
     // Checked at most once per animation frame, and state only changes when the answer does,
     // so scrolling never queues extra layout work or re-renders.
     let frame = 0;
+    let lastY = window.scrollY;
     const check = () => {
       frame = 0;
-      setScrolled(window.scrollY > 24);
+      const y = window.scrollY;
+      setScrolled(y > 24);
       const under = document.elementsFromPoint(window.innerWidth / 2, 40).find((el) => !el.closest("header"));
       setDark(Boolean(under?.closest("[data-nav='dark']")));
+      // Hide when reading downwards, show on any upward scroll (small deltas are ignored)
+      if (y < 160) setHidden(false);
+      else if (y > lastY + 6) setHidden(true);
+      else if (y < lastY - 6) setHidden(false);
+      if (Math.abs(y - lastY) > 6) lastY = y;
     };
     const onScroll = () => {
       if (!frame) frame = requestAnimationFrame(check);
@@ -98,7 +125,12 @@ export function Navbar() {
   const active = NAV.find((g) => g.label === open);
 
   return (
-    <header className="fixed inset-x-0 top-0 z-50">
+    <header
+      className={cn(
+        "fixed inset-x-0 top-0 z-50 transition-[translate] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]",
+        hidden && !open && !mobile && "-translate-y-full",
+      )}
+    >
       <div
         className={cn(
           "relative transition-[background-color,box-shadow] duration-500",
@@ -111,16 +143,29 @@ export function Navbar() {
                 : "bg-transparent",
         )}
         onMouseLeave={scheduleClose}
+        onPointerMove={(e) => {
+          if (e.pointerType !== "mouse") return;
+          const r = e.currentTarget.getBoundingClientRect();
+          spotX.set(e.clientX - r.left);
+          spotOn.set(1);
+        }}
+        onPointerLeave={() => spotOn.set(0)}
       >
+        {/* Cursor spotlight: a soft brand glow that follows the mouse along the bar */}
+        <motion.span
+          aria-hidden
+          className="nav-spot pointer-events-none absolute left-0 top-0 hidden h-full w-[440px] -translate-x-1/2 lg:block"
+          style={{ x: spotXs, opacity: spotOns }}
+        />
         <nav
           aria-label="Main"
           className={cn(
-            "mx-auto flex max-w-[1320px] items-center px-5 transition-[height] duration-500 sm:px-8 lg:px-12",
+            "relative mx-auto flex max-w-[1320px] items-center px-5 transition-[height] duration-500 sm:px-8 lg:px-12",
             scrolled ? "h-16" : "h-20",
           )}
         >
           <div className="mr-10 flex shrink-0 items-center gap-4">
-            <Link href="/" aria-label="QWY Software home" className="flex items-center" onClick={onLogoClick}>
+            <Link href="/" aria-label="QWY Software home" className="logo-wiggle flex items-center" onClick={onLogoClick}>
               <Logo tone={scrolled && dark && !open ? "white" : "color"} height={scrolled ? 26 : 30} priority />
             </Link>
             {/* On load: the divider draws down, then the Odoo badge slides out from behind it, left to right */}
@@ -164,9 +209,30 @@ export function Navbar() {
             </motion.a>
           </div>
 
-          <ul className="hidden items-center gap-1 lg:flex">
-            {NAV.map((g) => (
-              <li key={g.label} onMouseEnter={() => (g.columns ? openMenu(g.label) : setOpen(null))}>
+          <ul className="hidden items-center gap-1 lg:flex" onMouseLeave={() => setHovered(null)}>
+            {NAV.map((g, i) => (
+              <motion.li
+                key={g.label}
+                className="relative"
+                // Entrance: items drop in one by one after the logo
+                initial={reduce ? false : { opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, ease, delay: 0.35 + i * 0.07 }}
+                onMouseEnter={() => {
+                  setHovered(g.label);
+                  if (g.columns) openMenu(g.label);
+                  else setOpen(null);
+                }}
+              >
+                {/* Hover highlight: one soft pill that glides between items */}
+                {hovered === g.label && (
+                  <motion.span
+                    layoutId="nav-hover-pill"
+                    aria-hidden
+                    className="nav-pill absolute inset-0 rounded-lg bg-ink/[0.05]"
+                    transition={{ type: "spring", stiffness: 420, damping: 34 }}
+                  />
+                )}
                 {g.columns ? (
                   // Dropdown menus open on hover (and keyboard focus); the label itself is not clickable
                   <button
@@ -175,9 +241,9 @@ export function Navbar() {
                     aria-haspopup="true"
                     onFocus={() => openMenu(g.label)}
                     data-active={open === g.label}
-                    className="nav-hover flex cursor-default items-center gap-1 rounded-lg px-3 py-2 text-[0.9375rem] text-ink/80 transition-colors"
+                    className="nav-hover relative flex cursor-default items-center gap-1 rounded-lg px-3 py-2 text-[0.9375rem] text-ink/80 transition-colors"
                   >
-                    <span className="nav-text">{g.label}</span>
+                    <RollText text={g.label} />
                     <ChevronDown
                       className={cn("size-3.5 transition-transform duration-300", open === g.label && "rotate-180")}
                       aria-hidden
@@ -187,25 +253,32 @@ export function Navbar() {
                   <Link
                     href={to(g.href ?? "/")}
                     data-active={pathname === "/"}
-                    className="nav-hover rounded-lg px-3 py-2 text-[0.9375rem] text-ink/80 transition-colors"
+                    className="nav-hover relative block rounded-lg px-3 py-2 text-[0.9375rem] text-ink/80 transition-colors"
                   >
-                    <span className="nav-text">{g.label}</span>
+                    <RollText text={g.label} />
                   </Link>
                 ) : (
                   // Every other top-level item is a plain label for now
-                  <span className="nav-hover nav-label cursor-default rounded-lg px-3 py-2 text-[0.9375rem] text-ink/80">
-                    <span className="nav-text">{g.label}</span>
+                  <span className="nav-hover nav-label relative block cursor-default rounded-lg px-3 py-2 text-[0.9375rem] text-ink/80">
+                    <RollText text={g.label} />
                   </span>
                 )}
-              </li>
+              </motion.li>
             ))}
           </ul>
 
-          <div className="ml-auto hidden items-center gap-3 lg:flex">
-            <Button href="#contact" size="sm" className="h-10 px-4">
-              Get in touch
-            </Button>
-          </div>
+          <motion.div
+            className="ml-auto hidden items-center gap-3 lg:flex"
+            initial={reduce ? false : { opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, ease, delay: 0.35 + NAV.length * 0.07 }}
+          >
+            <Magnetic>
+              <Button href="#contact" size="sm" className="btn-sheen h-10 px-4">
+                Get in touch
+              </Button>
+            </Magnetic>
+          </motion.div>
 
           <button
             type="button"
@@ -217,6 +290,16 @@ export function Navbar() {
             {mobile ? <X className="size-5" /> : <Menu className="size-5" />}
           </button>
         </nav>
+
+        {/* Scroll progress: a thin brand-gradient line along the bottom of the bar */}
+        <motion.span
+          aria-hidden
+          className={cn(
+            "pointer-events-none absolute inset-x-0 bottom-0 h-[2px] origin-left bg-[linear-gradient(90deg,#ff1f6b,#c3158a_50%,#8f5cff)] transition-opacity duration-500",
+            scrolled && !open ? "opacity-100" : "opacity-0",
+          )}
+          style={{ scaleX: progress }}
+        />
 
         <AnimatePresence>
           {active?.columns && (
@@ -254,6 +337,27 @@ export function Navbar() {
   );
 }
 
+/* ---------- Creative navbar pieces ---------- */
+
+/** Menu label that rolls up letter by letter on hover, revealing a brand-gradient copy (styles: .roll* in globals.css) */
+function RollText({ text }: { text: string }) {
+  const chars = Array.from(text);
+  return (
+    <span className="roll" style={{ "--n": chars.length } as React.CSSProperties}>
+      <span className="sr-only">{text}</span>
+      {chars.map((ch, i) => {
+        const c = ch === " " ? "\u00a0" : ch;
+        return (
+          <span key={i} className="roll-ch" style={{ "--i": i } as React.CSSProperties} aria-hidden>
+            <span className="roll-top">{c}</span>
+            <span className="roll-bot">{c}</span>
+          </span>
+        );
+      })}
+    </span>
+  );
+}
+
 function MegaPanel({ group, onNavigate }: { group: NavGroup; onNavigate: () => void }) {
   return (
     <motion.div
@@ -265,12 +369,18 @@ function MegaPanel({ group, onNavigate }: { group: NavGroup; onNavigate: () => v
     >
       <p className="display col-span-3 text-[1.7rem] leading-[1.1] text-ink/90">{group.label}</p>
       <div className={cn("grid gap-10", group.feature ? "col-span-6" : "col-span-9", group.columns!.length > 1 && "grid-cols-2")}>
-        {group.columns!.map((col) => (
+        {group.columns!.map((col, ci) => (
           <div key={col.heading}>
             <p className="mb-4 text-[13px] text-mute">{col.heading}</p>
             <ul className="space-y-1">
-              {col.links.map((l) => (
-                <li key={l.label}>
+              {col.links.map((l, li) => (
+                // Links cascade in one after another when the panel opens
+                <motion.li
+                  key={l.label}
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.4, ease, delay: 0.08 + (ci * 5 + li) * 0.04 }}
+                >
                   <Link
                     href={to(l.href)}
                     onClick={onNavigate}
@@ -280,9 +390,8 @@ function MegaPanel({ group, onNavigate }: { group: NavGroup; onNavigate: () => v
                       {l.label}
                       <ArrowRight className="size-3.5 -translate-x-1 opacity-0 transition-all group-hover:translate-x-0 group-hover:opacity-100" />
                     </span>
-                    {l.description && <span className="mt-0.5 block text-[13.5px] text-mute">{l.description}</span>}
                   </Link>
-                </li>
+                </motion.li>
               ))}
             </ul>
           </div>

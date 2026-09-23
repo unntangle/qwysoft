@@ -5,6 +5,9 @@ import { Container } from "@/components/ui/container";
 import { HeroComposition } from "@/components/hero/hero-composition";
 import { HeroCentered } from "@/components/hero/hero-center";
 import { HeroFade, HeroGlow, HeroRise } from "@/components/hero/hero-scroll";
+import { HeroField } from "@/components/hero/hero-field";
+import { HeroParallax } from "@/components/hero/hero-parallax";
+import { Magnetic } from "@/components/ui/magnetic";
 import { HERO, STACK } from "@/lib/constants";
 
 /* ------------------------------------------------------------------
@@ -36,11 +39,22 @@ export function Hero() {
         />
         <HeroGlow className="absolute inset-x-0 top-[48%] -z-10 h-[40%] origin-bottom bg-[radial-gradient(50%_60%_at_50%_70%,rgba(240,226,255,0.95)_0%,rgba(196,150,255,0.55)_35%,rgba(122,47,212,0)_75%)]" />
         <div aria-hidden className="grain absolute inset-0 -z-10 opacity-60" />
+        {/* Interactive dot-matrix field that follows the cursor */}
+        <HeroField className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[min(1000px,72%)] w-full" />
+        {/* Two soft brand orbs: drift slowly on their own, and move in opposite directions with the mouse */}
+        <div aria-hidden className="hx-orb-a pointer-events-none absolute left-[4%] top-[6%] -z-10 size-[420px]">
+          <div className="hx-float size-full rounded-full bg-[radial-gradient(closest-side,rgba(255,31,107,0.26),transparent)]" />
+        </div>
+        <div aria-hidden className="hx-orb-b pointer-events-none absolute right-[2%] top-[18%] -z-10 size-[480px]">
+          <div className="hx-float-alt size-full rounded-full bg-[radial-gradient(closest-side,rgba(143,92,255,0.3),transparent)]" />
+        </div>
+        {/* Tracks the mouse over the card and drives the .hx-* depth layers */}
+        <HeroParallax />
 
         <Container className="relative pb-14 pt-16 sm:pt-20">
           <HeroFade>
           {/* Pill */}
-          <div className="flex justify-center">
+          <div className="hx-1 flex justify-center">
             <span className="rounded-full border border-white/20 bg-white/10 px-3.5 py-1 text-[13px] text-white/85 backdrop-blur">
               Odoo Silver Partner
             </span>
@@ -51,12 +65,16 @@ export function Hero() {
               slides={HERO.slides}
               actions={
                 <>
-                  <Button href={HERO.primary.href} variant="light">
-                    {HERO.primary.label}
-                  </Button>
-                  <Button href={HERO.secondary.href} variant="ghost-light" arrow={false}>
-                    {HERO.secondary.label}
-                  </Button>
+                  <Magnetic strength={0.22}>
+                    <Button href={HERO.primary.href} variant="light">
+                      {HERO.primary.label}
+                    </Button>
+                  </Magnetic>
+                  <Magnetic strength={0.22}>
+                    <Button href={HERO.secondary.href} variant="ghost-light" arrow={false}>
+                      {HERO.secondary.label}
+                    </Button>
+                  </Magnetic>
                 </>
               }
             />
@@ -98,7 +116,10 @@ export function Hero() {
 
           {/* Product shot, lit from the floor: stands up flat as it scrolls into view */}
           <HeroRise className="relative">
-            <HeroComposition />
+            {/* Tilts gently towards the cursor, like a device held in the hand */}
+            <div className="hx-tilt">
+              <HeroComposition />
+            </div>
           </HeroRise>
 
           {/* Pillars */}
