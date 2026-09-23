@@ -271,19 +271,6 @@ export function ChatWidget() {
 
       {/* Launcher */}
       <div className="flex items-center gap-3">
-        <AnimatePresence>
-          {!open && (
-            <motion.span
-              initial={{ opacity: 0, x: 8 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: 8 }}
-              transition={{ delay: reduce ? 0 : 1.2, duration: 0.4, ease }}
-              className="hidden rounded-full border border-line bg-white px-3.5 py-2 text-[13px] text-ink shadow-[0_10px_24px_-14px_rgba(40,10,90,0.35)] sm:block"
-            >
-              Ask QWY AI
-            </motion.span>
-          )}
-        </AnimatePresence>
         <button
           type="button"
           onClick={() => setOpen((o) => !o)}
@@ -300,7 +287,15 @@ export function ChatWidget() {
               transition={{ duration: 0.2 }}
               className="relative"
             >
-              {open ? <X className="size-5" aria-hidden /> : <MessageSquare className="size-5" strokeWidth={1.9} aria-hidden />}
+              {open ? (
+                <X className="size-5" aria-hidden />
+              ) : (
+                // Chat bubble with "AI" written inside it
+                <span className="relative block size-7" aria-hidden>
+                  <MessageSquare className="size-7" strokeWidth={1.6} />
+                  <span className="absolute inset-x-0 top-[29%] text-center text-[8.5px] font-bold leading-none tracking-[0.02em]">AI</span>
+                </span>
+              )}
             </motion.span>
           </AnimatePresence>
         </button>
